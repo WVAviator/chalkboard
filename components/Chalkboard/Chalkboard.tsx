@@ -23,6 +23,19 @@ const Chalkboard: React.FC = () => {
 
   return (
     <div className={styles.chalkboard}>
+      {/* TODO: Temporary button for testing, should replace with Toolbar component */}
+      <button
+        onClick={() => {
+          if (activeComponent === 'svg') {
+            setActiveComponent(null);
+          } else {
+            setActiveComponent('svg');
+          }
+        }}
+        style={{ position: 'absolute' }}
+      >
+        svg
+      </button>
       <ActiveComponentProvider value={{ activeComponent, setActiveComponent }}>
         <ComponentCanvas
           activeComponent={activeComponent}

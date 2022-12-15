@@ -1,4 +1,5 @@
 import React from 'react';
+import PaintableSVG from '../PaintableSVG/PaintableSVG';
 import styles from './ComponentCanvas.module.css';
 
 /**
@@ -42,7 +43,9 @@ export type PaintableComponent = React.FC<PaintableComponentProps>;
  */
 export type PaintableComponentMap = Record<string, PaintableComponent>;
 
-const defaultPaintableComponentMap: PaintableComponentMap = {};
+const defaultPaintableComponentMap: PaintableComponentMap = {
+  svg: PaintableSVG,
+};
 
 interface ComponentCanvasProps {
   activeComponent: string | null;
@@ -75,7 +78,7 @@ const ComponentCanvas: React.FC<ComponentCanvasProps> = ({
       ...components,
       {
         type: activeComponent,
-        props: activeComponentProps,
+        props: { ...activeComponentProps, createEvent: event },
         data: [],
       },
     ]);
