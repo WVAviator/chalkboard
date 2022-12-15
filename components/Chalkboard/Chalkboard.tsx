@@ -48,6 +48,17 @@ const Chalkboard: React.FC = () => {
         >
           div
         </button>
+        <button
+          onClick={() => {
+            if (activeComponent === 'code') {
+              setActiveComponent(null);
+            } else {
+              setActiveComponent('code');
+            }
+          }}
+        >
+          code
+        </button>
       </div>
       <ActiveComponentProvider value={{ activeComponent, setActiveComponent }}>
         <ComponentCanvas

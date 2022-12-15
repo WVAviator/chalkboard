@@ -4,12 +4,11 @@ import { ActiveComponentContext } from '../ActiveComponentProvider/ActiveCompone
 import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
 import styles from './PaintableDiv.module.css';
 
-const MIN_WIDTH = 100;
-const MIN_HEIGHT = 100;
-
 interface PaintableDivProps extends PaintableComponentProps {
   backgroundColor?: string;
   children?: React.ReactNode;
+  minWidth?: number;
+  minHeight?: number;
 }
 
 const PaintableDiv: React.FC<PaintableDivProps> = ({
@@ -19,6 +18,8 @@ const PaintableDiv: React.FC<PaintableDivProps> = ({
   data,
   setData,
   canvasRect,
+  minWidth = 0,
+  minHeight = 0,
 }) => {
   const [position, setPosition] = React.useState(
     createEvent
@@ -29,7 +30,7 @@ const PaintableDiv: React.FC<PaintableDivProps> = ({
       : data.position
   );
   const [size, setSize] = React.useState(
-    createEvent ? [MIN_WIDTH, MIN_HEIGHT] : data.size
+    createEvent ? [minWidth, minHeight] : data.size
   );
   const [isSizing, setIsSizing] = React.useState(!!createEvent);
 
@@ -53,8 +54,8 @@ const PaintableDiv: React.FC<PaintableDivProps> = ({
       event.clientY - canvasRect.top,
     ];
     const size = [
-      Math.max(x - position[0], MIN_WIDTH),
-      Math.max(y - position[1], MIN_HEIGHT),
+      Math.max(x - position[0], minWidth),
+      Math.max(y - position[1], minHeight),
     ];
     setSize(size);
   };
@@ -82,10 +83,6 @@ const PaintableDiv: React.FC<PaintableDivProps> = ({
     >
       <div
         className={styles.inner}
-        // onClick={(e: MouseEvent) => {
-        //   if (isSizing) return;
-        //   e.stopPropagation();
-        // }}
         onPointerDown={(event) => {
           if (activeComponent || isSizing) return;
           dragEvents.handlePointerDown(event);

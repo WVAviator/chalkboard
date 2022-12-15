@@ -1,0 +1,47 @@
+.wrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.topBar {
+  height: 2rem;
+  width: 100%;
+  background-color: #eb5c08;
+}
+
+.editorContainer {
+  flex: 1;
+  width: 100%;
+  padding: 0.5rem 0;
+  position: relative;
+}
+
+.controls {
+  color: green;
+  position: absolute;
+  left: 0.5rem;
+  bottom: 0;
+}
+
+.console {
+  max-height: 25rem;
+  overflow-y: auto;
+  min-height: 2rem;
+  width: 100%;
+  font-family: 'Inconsolata', monospace;
+  font-size: 12px;
+  background-color: #222;
+  color: #fff;
+  padding: 0.25rem 0.5rem;
+  position: relative;
+}
+
+.console::-webkit-scrollbar {
+  background-color: #1e1e1e;
+}
+
+.console::-webkit-scrollbar-thumb {
+  background-color: #515151;
+}
