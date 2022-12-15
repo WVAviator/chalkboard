@@ -1,4 +1,5 @@
 import React from 'react';
+import PaintableDiv from '../PaintableDiv/PaintableDiv';
 import PaintableSVG from '../PaintableSVG/PaintableSVG';
 import styles from './ComponentCanvas.module.css';
 
@@ -45,6 +46,7 @@ export type PaintableComponentMap = Record<string, PaintableComponent>;
 
 const defaultPaintableComponentMap: PaintableComponentMap = {
   svg: PaintableSVG,
+  div: PaintableDiv,
 };
 
 interface ComponentCanvasProps {
