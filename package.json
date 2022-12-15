@@ -1,0 +1,19 @@
+{
+  "name": "chalkboard",
+  "version": "0.0.1",
+  "description": "A small web application geared towards developers that want to draw diagrams as well as execute code in the same place.",
+  "main": "index.js",
+  "author": "Alexander Durham",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^13.0.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
