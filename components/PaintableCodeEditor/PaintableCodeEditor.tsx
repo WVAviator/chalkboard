@@ -18,12 +18,9 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
   const [loadingConsoleOutput, setLoadingConsoleOutput] =
     React.useState<boolean>(false);
 
-  const editorRef = React.useRef(null);
-
   const handleEditorMount = (editor: any) => {
-    editorRef.current = editor;
-    const value = editor.getValue();
-    setData({ ...data, code: value });
+    const code = editor.getValue();
+    setData({ ...data, code });
   };
 
   const handleEditorChange = (value: string | undefined) => {
@@ -45,7 +42,7 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
       console.log('newConsoleOutput: ', newConsoleOutput);
       setConsoleOutput(newConsoleOutput);
     } else {
-      console.log('An error occurred.');
+      console.log('An error occurred while attempting to compile and execute code.');
     }
     setLoadingConsoleOutput(false);
   };
