@@ -1,5 +1,6 @@
 import { stringify } from 'querystring';
 import React, { useEffect } from 'react';
+import CanvasModel from '../../models/Canvas';
 import ActiveComponentProvider from '../ActiveComponentProvider/ActiveComponentProvider';
 import ComponentCanvas, {
   PaintableComponentData,
@@ -58,6 +59,30 @@ const Chalkboard: React.FC = () => {
           }}
         >
           code
+        </button>
+        <button
+          onClick={async () => {
+            const body = {
+              components: chalkboardData,
+              user: '123',
+              title: 'test',
+            };
+            const response = await fetch('/api/canvas', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(body),
+            });
+            const data = await response.json();
+            if (data.success) {
+              console.log('Canvas saved');
+            } else {
+              console.log('Error saving canvas');
+            }
+          }}
+        >
+          save
         </button>
       </div>
       <ActiveComponentProvider value={{ activeComponent, setActiveComponent }}>
