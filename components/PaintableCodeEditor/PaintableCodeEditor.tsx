@@ -39,10 +39,11 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
     const { stdout, success } = await response.json();
     if (success) {
       const newConsoleOutput: string[] = stdout.split('\n');
-      console.log('newConsoleOutput: ', newConsoleOutput);
       setConsoleOutput(newConsoleOutput);
     } else {
-      console.log('An error occurred while attempting to compile and execute code.');
+      console.log(
+        'An error occurred while attempting to compile and execute code.'
+      );
     }
     setLoadingConsoleOutput(false);
   };

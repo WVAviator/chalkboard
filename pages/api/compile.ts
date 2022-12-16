@@ -9,8 +9,6 @@ export default async function handler(
     return res.status(403).json({ message: 'Method not allowed' });
   }
 
-  console.log(req.body);
-
   const codeBuffer = Buffer.from(req.body.code).toString('base64');
 
   const data = {
@@ -36,7 +34,6 @@ export default async function handler(
     const stdout = Buffer.from(response.data.stdout, 'base64').toString(
       'utf-8'
     );
-    console.dir(stdout);
     res.status(200).send({ stdout, success: true });
   } catch (error) {
     console.log('Error fetching executed code: ', error);
