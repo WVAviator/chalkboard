@@ -22,13 +22,19 @@
   color: green;
   position: absolute;
   left: 0.5rem;
-  bottom: 0;
+  bottom: 0.5rem;
+  cursor: pointer;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .console {
   max-height: 25rem;
   overflow-y: auto;
-  min-height: 2rem;
+  min-height: 5rem;
   width: 100%;
   font-family: 'Inconsolata', monospace;
   font-size: 12px;
