@@ -5,7 +5,6 @@ import UserProfile from '../components/UserProfile/UserProfile';
 const HomePage: NextPage = () => {
   return (
     <div>
-      <UserProfile />
       <Chalkboard />
     </div>
   );

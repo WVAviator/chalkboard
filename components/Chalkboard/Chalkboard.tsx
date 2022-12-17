@@ -11,6 +11,7 @@ import SquareIcon from '@mui/icons-material/Square';
 import CodeIcon from '@mui/icons-material/Code';
 import SaveIcon from '@mui/icons-material/Save';
 import CanvasToolbar from '../CanvasToolbar/CanvasToolbar';
+import UserProfile from '../UserProfile/UserProfile';
 
 const Chalkboard: React.FC = () => {
   const [chalkboardData, setChalkboardData] = React.useState<
@@ -24,7 +25,14 @@ const Chalkboard: React.FC = () => {
   );
 
   useEffect(() => {
-    //TODO: Get data from server for saved canvas or initialize new canvas
+    const restoreCanvas = () => {
+      const restoredData = localStorage.getItem('chalkboardData');
+      if (restoredData) {
+        setChalkboardData(JSON.parse(restoredData));
+        localStorage.removeItem('chalkboardData');
+      }
+    };
+    restoreCanvas();
   }, []);
 
   const toolbarItems = [
@@ -87,10 +95,23 @@ const Chalkboard: React.FC = () => {
     },
   ];
 
+  const localSave = () => {
+    localStorage.setItem('chalkboardData', JSON.stringify(chalkboardData));
+  };
+
+  const handleLogin = () => {
+    localSave();
+  };
+
+  const handleLogout = () => {
+    localSave();
+  };
+
   return (
     <div className={styles.chalkboard}>
       {/* TODO: Temporary buttons for testing, should replace with Toolbar component */}
       <CanvasToolbar items={toolbarItems} />
+      <UserProfile onLoginAttempt={handleLogin} onLogout={handleLogout} />
       <ActiveComponentProvider value={{ activeComponent, setActiveComponent }}>
         <ComponentCanvas
           activeComponent={activeComponent}

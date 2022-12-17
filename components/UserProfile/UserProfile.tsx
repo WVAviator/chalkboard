@@ -12,9 +12,18 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import React, { MouseEvent } from 'react';
 import styles from './UserProfile.module.css';
 
-const UserProfile = () => {
+interface UserProfileProps {
+  onLoginAttempt?: () => void;
+  onLogout?: () => void;
+}
+
+const UserProfile: React.FC<UserProfileProps> = ({
+  onLoginAttempt = () => {},
+  onLogout = () => {},
+}) => {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -26,11 +35,13 @@ const UserProfile = () => {
 
   const handleSignIn = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
+    onLoginAttempt();
     signIn();
   };
 
   const handleSignOut = () => {
     setAnchorEl(null);
+    onLogout();
     signOut();
   };
 
