@@ -17,9 +17,12 @@
     "@monaco-editor/react": "^4.4.6",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.0",
+    "@next-auth/mongodb-adapter": "^1.1.1",
     "axios": "^1.2.1",
+    "mongodb": "^4.12.1",
     "mongoose": "^6.8.0",
     "next": "^13.0.6",
+    "next-auth": "^4.18.6",
     "perfect-freehand": "^1.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

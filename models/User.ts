@@ -1,10 +1,38 @@
-import { Schema, model, models } from 'mongoose';
+import mongoose from 'mongoose';
 
-const UserSchema = new Schema({
-  name: String,
-  email: String,
+export interface UserData {
+  githubId: string;
+  name: string;
+  email: string;
+  avatarUrl?: string;
+  createdAt?: Date;
+}
+
+const userSchema = new mongoose.Schema<UserData>({
+  githubId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  avatarUrl: {
+    type: String,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-const UserModel = models.User || model('User', UserSchema);
+const UserModel =
+  (mongoose.models.User as mongoose.Model<UserData>) ||
+  mongoose.model('User', userSchema);
 
 export default UserModel;

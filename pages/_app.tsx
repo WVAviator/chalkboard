@@ -2,8 +2,12 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import next from 'next';
 import { AppProps } from 'next/app';
 import '../styles/globals.css';
+import { SessionProvider } from 'next-auth/react';
+import { Session } from 'next-auth';
 
-interface CustomPageProps {}
+interface CustomPageProps {
+  session: Session;
+}
 
 const theme = createTheme({
   palette: {
@@ -13,10 +17,15 @@ const theme = createTheme({
   },
 });
 
-const App = ({ Component, pageProps }: AppProps<CustomPageProps>) => {
+const App = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps<CustomPageProps>) => {
   return (
     <ThemeProvider theme={theme}>
-      <Component {...pageProps} />
+      <SessionProvider session={session}>
+        <Component {...pageProps} />
+      </SessionProvider>
     </ThemeProvider>
   );
 };
