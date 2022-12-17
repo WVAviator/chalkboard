@@ -2,8 +2,20 @@
   position: fixed;
   top: 1rem;
   right: 1rem;
-  width: 15rem;
-  height: 5rem;
-  background-color: #fff;
+
+  color: white;
+  font-size: 1rem;
+
+  display: flex;
+  gap: 1rem;
+  justify-content: right;
+  align-items: center;
   z-index: 10000;
+}
+
+.avatar {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: right;
+  align-items: center;
 }

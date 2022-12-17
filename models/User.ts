@@ -1,35 +1,33 @@
 import mongoose from 'mongoose';
 
 export interface UserData {
-  githubId: string;
   name: string;
   email: string;
-  avatarUrl?: string;
-  createdAt?: Date;
+  image?: string | null;
+  emailVerified?: Date | null;
 }
 
-const userSchema = new mongoose.Schema<UserData>({
-  githubId: {
-    type: String,
-    required: true,
-    unique: true,
+const userSchema = new mongoose.Schema<UserData>(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    image: {
+      type: String,
+    },
+    emailVerified: {
+      type: Date,
+    },
   },
-  name: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  avatarUrl: {
-    type: String,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  {
+    collection: 'users',
+  }
+);
 
 const UserModel =
   (mongoose.models.User as mongoose.Model<UserData>) ||
