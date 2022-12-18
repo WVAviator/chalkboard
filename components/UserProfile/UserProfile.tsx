@@ -15,11 +15,13 @@ import styles from './UserProfile.module.css';
 interface UserProfileProps {
   onLoginAttempt?: () => void;
   onLogout?: () => void;
+  onMyChalkboards?: () => void;
 }
 
 const UserProfile: React.FC<UserProfileProps> = ({
   onLoginAttempt = () => {},
   onLogout = () => {},
+  onMyChalkboards = () => {},
 }) => {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
@@ -43,6 +45,11 @@ const UserProfile: React.FC<UserProfileProps> = ({
     setAnchorEl(null);
     onLogout();
     signOut();
+  };
+
+  const handleMyChalkboards = () => {
+    setAnchorEl(null);
+    onMyChalkboards();
   };
 
   return (
@@ -70,8 +77,8 @@ const UserProfile: React.FC<UserProfileProps> = ({
               'aria-labelledby': 'basic-button',
             }}
           >
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>My Account</MenuItem>
+            {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
+            <MenuItem onClick={handleMyChalkboards}>My Chalkboards</MenuItem>
             <MenuItem onClick={handleSignOut}>Logout</MenuItem>
           </Menu>
         </div>

@@ -12,6 +12,7 @@ import CodeIcon from '@mui/icons-material/Code';
 import SaveIcon from '@mui/icons-material/Save';
 import CanvasToolbar from '../CanvasToolbar/CanvasToolbar';
 import UserProfile from '../UserProfile/UserProfile';
+import MyChalkboards from '../MyChalkboards/MyChalkboards';
 
 const Chalkboard: React.FC = () => {
   const [chalkboardData, setChalkboardData] = React.useState<
@@ -23,6 +24,10 @@ const Chalkboard: React.FC = () => {
   const [activeComponentProps, setActiveComponentProps] = React.useState<any>(
     {}
   );
+  const [myChalkboardsModalOpen, setMyChalkboardsModalOpen] =
+    React.useState<boolean>(false);
+
+  const [canvasId, setCanvasId] = React.useState<string | null>(null);
 
   useEffect(() => {
     const restoreCanvas = () => {
@@ -75,8 +80,8 @@ const Chalkboard: React.FC = () => {
       onClick: async () => {
         const body = {
           components: chalkboardData,
-          user: '123',
           title: 'test',
+          canvasId,
         };
         const response = await fetch('/api/canvas', {
           method: 'POST',
@@ -107,11 +112,34 @@ const Chalkboard: React.FC = () => {
     localSave();
   };
 
+  const handleMyChalkboards = () => {
+    setMyChalkboardsModalOpen(true);
+  };
+
+  const handleLoadCanvas = async (canvasId: string) => {
+    const response = await fetch(`/api/canvas/${canvasId}`);
+    const { data, success } = await response.json();
+    if (success) {
+      setChalkboardData(data.components);
+      setCanvasId(data._id);
+    } else {
+      console.log('Error loading canvas');
+    }
+  };
+
   return (
     <div className={styles.chalkboard}>
-      {/* TODO: Temporary buttons for testing, should replace with Toolbar component */}
       <CanvasToolbar items={toolbarItems} />
-      <UserProfile onLoginAttempt={handleLogin} onLogout={handleLogout} />
+      <UserProfile
+        onLoginAttempt={handleLogin}
+        onLogout={handleLogout}
+        onMyChalkboards={handleMyChalkboards}
+      />
+      <MyChalkboards
+        open={myChalkboardsModalOpen}
+        setOpen={setMyChalkboardsModalOpen}
+        onSelected={handleLoadCanvas}
+      />
       <ActiveComponentProvider value={{ activeComponent, setActiveComponent }}>
         <ComponentCanvas
           activeComponent={activeComponent}
