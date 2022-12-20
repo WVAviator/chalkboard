@@ -4,6 +4,7 @@ import CanvasModel from '../../models/Canvas';
 import ActiveComponentProvider from '../ActiveComponentProvider/ActiveComponentProvider';
 import ComponentCanvas, {
   PaintableComponentData,
+  PaintableComponentProps,
 } from '../ComponentCanvas/ComponentCanvas';
 import styles from './Chalkboard.module.css';
 import CreateIcon from '@mui/icons-material/Create';
@@ -15,6 +16,7 @@ import UserProfile from '../UserProfile/UserProfile';
 import MyChalkboards from '../MyChalkboards/MyChalkboards';
 import FileMenu from '../FileMenu/FileMenu';
 import TitleDisplay from '../TitleDisplay/TitleDisplay';
+import ColorPicker from '../ColorPicker/ColorPicker';
 
 const Chalkboard: React.FC = () => {
   const [chalkboardData, setChalkboardData] = React.useState<
@@ -23,9 +25,14 @@ const Chalkboard: React.FC = () => {
   const [activeComponent, setActiveComponent] = React.useState<string | null>(
     null
   );
-  const [activeComponentProps, setActiveComponentProps] = React.useState<any>(
-    {}
-  );
+  const [activeComponentProps, setActiveComponentProps] =
+    React.useState<PaintableComponentProps>({
+      color: '#FFFFFF',
+      canvasRect: null,
+      data: [],
+      setData: () => {},
+      createEvent: null,
+    });
   const [myChalkboardsModalOpen, setMyChalkboardsModalOpen] =
     React.useState<boolean>(false);
 
@@ -191,7 +198,18 @@ const Chalkboard: React.FC = () => {
           <FileMenu options={fileMenuOptions} />
           <TitleDisplay title={canvasTitle} setTitle={setCanvasTitle} />
         </div>
-        <CanvasToolbar items={toolbarItems} />
+        <div className={styles.tools}>
+          <CanvasToolbar items={toolbarItems} />
+          <ColorPicker
+            color={activeComponentProps.color}
+            setColor={(color) => {
+              setActiveComponentProps((activeComponentProps) => ({
+                ...activeComponentProps,
+                color,
+              }));
+            }}
+          />
+        </div>
         <UserProfile
           onLoginAttempt={handleLogin}
           onLogout={handleLogout}

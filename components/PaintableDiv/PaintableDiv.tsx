@@ -5,14 +5,13 @@ import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
 import styles from './PaintableDiv.module.css';
 
 interface PaintableDivProps extends PaintableComponentProps {
-  backgroundColor?: string;
   children?: React.ReactNode;
   minWidth?: number;
   minHeight?: number;
 }
 
 const PaintableDiv: React.FC<PaintableDivProps> = ({
-  backgroundColor = 'black',
+  color = '#FFFFFF',
   children = null,
   createEvent,
   data,
@@ -94,7 +93,7 @@ const PaintableDiv: React.FC<PaintableDivProps> = ({
           height: `${size[1]}px`,
           pointerEvents: activeComponent ? 'none' : 'all',
           transform: `translateX(${transform.x}px) translateY(${transform.y}px)`,
-          backgroundColor,
+          backgroundColor: color,
         }}
       >
         {children}

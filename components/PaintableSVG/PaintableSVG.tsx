@@ -20,16 +20,14 @@ const defaultOptions = {
   },
 };
 
-interface PaintableSVGProps extends PaintableComponentProps {
-  color?: string;
-}
+interface PaintableSVGProps extends PaintableComponentProps {}
 
 const PaintableSVG: React.FC<PaintableSVGProps> = ({
   createEvent,
   data,
   setData,
   canvasRect,
-  color = 'white',
+  color = '#FFFFFF',
 }) => {
   const [points, setPoints] = React.useState<number[][]>(
     createEvent

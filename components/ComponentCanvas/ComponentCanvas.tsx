@@ -33,6 +33,11 @@ export interface PaintableComponentProps {
    * The canvasRect is the DOMRect of the canvas. This is used by the component to calculate the position of the pointer relative to the canvas.
    */
   canvasRect: DOMRect;
+
+  /**
+   * The primary color of the selected element.
+   */
+  color: string;
 }
 
 /**

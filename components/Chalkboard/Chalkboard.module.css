@@ -22,3 +22,9 @@
   gap: 2rem;
   align-items: center;
 }
+
+.tools {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}

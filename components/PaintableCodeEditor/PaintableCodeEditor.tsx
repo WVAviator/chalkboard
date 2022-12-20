@@ -12,6 +12,7 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
   createEvent,
   data,
   setData,
+  color = '#eb5c08',
   ...rest
 }) => {
   const [consoleOutput, setConsoleOutput] = React.useState<string[]>([]);
@@ -53,13 +54,13 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
       createEvent={createEvent}
       data={data}
       setData={setData}
-      backgroundColor="#1E1E1E"
+      color={color}
       minWidth={300}
       minHeight={200}
       {...rest}
     >
       <div className={styles.wrapper}>
-        <div className={styles.topBar}></div>
+        <div className={styles.topBar} style={{ backgroundColor: color }}></div>
         <div
           className={styles.editorContainer}
           onPointerDown={(event) => event.stopPropagation()}

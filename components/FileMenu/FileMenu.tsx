@@ -25,8 +25,8 @@ const FileMenu: React.FC<FileMenuProps> = ({ options }) => {
   return (
     <div>
       <Button
-        id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
+        id="file-button"
+        aria-controls={open ? 'file-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
@@ -41,7 +41,7 @@ const FileMenu: React.FC<FileMenuProps> = ({ options }) => {
         open={open}
         onClose={handleClose}
         MenuListProps={{
-          'aria-labelledby': 'basic-button',
+          'aria-labelledby': 'file-button',
         }}
       >
         {options.map((option) => (
