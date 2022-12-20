@@ -1,9 +1,17 @@
 import React from 'react';
-import useDragTransform from '../../hooks/useDragTransform';
+import useDragTransform, { Transform } from '../../hooks/useDragTransform';
 import { ActiveComponentContext } from '../ActiveComponentProvider/ActiveComponentProvider';
-import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
+import {
+  PaintableComponentData,
+  PaintableComponentProps,
+} from '../ComponentCanvas/ComponentCanvas';
 import styles from './PaintableDiv.module.css';
 
+export interface PaintableDivData extends PaintableComponentData {
+  position: number[][];
+  size: number[][];
+  transform: Transform;
+}
 interface PaintableDivProps extends PaintableComponentProps {
   children?: React.ReactNode;
   minWidth?: number;

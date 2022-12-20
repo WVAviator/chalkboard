@@ -6,8 +6,10 @@
 }
 
 .topBar {
-  height: 2rem;
+  min-height: 2rem;
   width: 100%;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .editorContainer {

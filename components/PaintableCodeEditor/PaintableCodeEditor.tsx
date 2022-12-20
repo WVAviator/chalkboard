@@ -1,10 +1,16 @@
 import Editor, { Monaco } from '@monaco-editor/react';
 import React from 'react';
 import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
-import PaintableDiv from '../PaintableDiv/PaintableDiv';
+import PaintableDiv, { PaintableDivData } from '../PaintableDiv/PaintableDiv';
 import styles from './PaintableCodeEditor.module.css';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { CircularProgress } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
+import CodeEditorModal, { CodeContext } from '../CodeEditorModal/CodeEditorModal';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+
+export interface PaintableCodeEditorData extends PaintableDivData {
+  codeContext: CodeContext;
+}
 
 interface PaintableCodeEditorProps extends PaintableComponentProps {}
 
@@ -18,24 +24,37 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
   const [consoleOutput, setConsoleOutput] = React.useState<string[]>([]);
   const [loadingConsoleOutput, setLoadingConsoleOutput] =
     React.useState<boolean>(false);
+    const [modalEditorOpen, setModalEditorOpen] = React.useState<boolean>(false);
 
   const handleEditorMount = (editor: any) => {
     const code = editor.getValue();
-    setData({ ...data, code });
+    updateCodeContext({
+      main: code,
+      before: '// Code you write here will be executed *before* any visible code in this editor block.\n',
+      after: '// Code you write here will be executed *after* any visible code in this editor block.\n'
+    });
   };
 
   const handleEditorChange = (value: string | undefined) => {
-    setData({ ...data, code: value });
+    updateCodeContext({...data.codeContext, main: value});
   };
+
+  const updateCodeContext = (newContext: CodeContext) => {
+    setData({ ...data, codeContext: newContext });
+  }
 
   const handleCodeExecute = async () => {
     setLoadingConsoleOutput(true);
+
+    const { before, main, after } = data.codeContext;
+    const codeToExecute = `${before}\n${main}\n${after}`;
+
     const response = await fetch('/api/compile', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ code: data.code }),
+      body: JSON.stringify({ code: codeToExecute }),
     });
     const { stdout, success } = await response.json();
     if (success) {
@@ -60,7 +79,7 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
       {...rest}
     >
       <div className={styles.wrapper}>
-        <div className={styles.topBar} style={{ backgroundColor: color }}></div>
+        <div className={styles.topBar} style={{ backgroundColor: color }}><Button onClick={() => setModalEditorOpen(true)}><OpenInNewIcon/></Button></div>
         <div
           className={styles.editorContainer}
           onPointerDown={(event) => event.stopPropagation()}
@@ -74,9 +93,11 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
                 ? `const add = (a, b) => {\n  return a + b;\n}\n\nconsole.log(add(1, 2));\n`
                 : data.code
             }
+            value={data.codeContext.main}
             onMount={handleEditorMount}
             onChange={handleEditorChange}
           />
+          <CodeEditorModal open={modalEditorOpen} setOpen={setModalEditorOpen} codeContext={data.codeContext} setCodeContext={updateCodeContext} />
           <div className={styles.controls} onClick={handleCodeExecute}>
             {loadingConsoleOutput ? (
               <CircularProgress size="1.25rem" thickness={6} />
