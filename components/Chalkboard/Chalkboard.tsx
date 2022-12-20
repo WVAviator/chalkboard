@@ -13,6 +13,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CanvasToolbar from '../CanvasToolbar/CanvasToolbar';
 import UserProfile from '../UserProfile/UserProfile';
 import MyChalkboards from '../MyChalkboards/MyChalkboards';
+import FileMenu from '../FileMenu/FileMenu';
 
 const Chalkboard: React.FC = () => {
   const [chalkboardData, setChalkboardData] = React.useState<
@@ -80,9 +81,25 @@ const Chalkboard: React.FC = () => {
         }
       },
     },
+  ];
+
+  const fileMenuOptions = [
     {
-      icon: <SaveIcon />,
-      selected: false,
+      label: 'New',
+      onClick: () => {
+        setChalkboardData([]);
+        setCanvasId(null);
+        setCanvasTitle('Untitled');
+      },
+    },
+    {
+      label: 'Open',
+      onClick: () => {
+        setMyChalkboardsModalOpen(true);
+      },
+    },
+    {
+      label: 'Save',
       onClick: async () => {
         const body = {
           components: chalkboardData,
@@ -91,6 +108,28 @@ const Chalkboard: React.FC = () => {
         };
         const fetchUrl = canvasId ? `/api/canvas/${canvasId}` : '/api/canvas';
         const response = await fetch(fetchUrl, {
+          method: canvasId ? 'PATCH' : 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        });
+        const data = await response.json();
+        if (data.success) {
+          console.log('Canvas saved');
+        } else {
+          console.log('Error saving canvas');
+        }
+      },
+    },
+    {
+      label: 'Save As',
+      onClick: async () => {
+        const body = {
+          components: chalkboardData,
+          title: canvasTitle,
+        };
+        const response = await fetch('/api/canvas', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -142,12 +181,15 @@ const Chalkboard: React.FC = () => {
 
   return (
     <div className={styles.chalkboard}>
-      <CanvasToolbar items={toolbarItems} />
-      <UserProfile
-        onLoginAttempt={handleLogin}
-        onLogout={handleLogout}
-        onMyChalkboards={handleMyChalkboards}
-      />
+      <header className={styles.header}>
+        <FileMenu options={fileMenuOptions} />
+        <CanvasToolbar items={toolbarItems} />
+        <UserProfile
+          onLoginAttempt={handleLogin}
+          onLogout={handleLogout}
+          onMyChalkboards={handleMyChalkboards}
+        />
+      </header>
       <MyChalkboards
         open={myChalkboardsModalOpen}
         setOpen={setMyChalkboardsModalOpen}

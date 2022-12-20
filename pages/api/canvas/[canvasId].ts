@@ -31,7 +31,9 @@ export default async function handler(
     }
     console.log('Successfully retrieved canvas.');
     return res.status(200).json({ success: true, data: canvas });
-  } else if (method === 'PATCH') {
+  }
+
+  if (method === 'PATCH') {
     const saveData = { ...req.body, userEmail: session.user.email };
     console.log('Attempting to update canvas with id: ' + canvasId);
 
@@ -58,4 +60,6 @@ export default async function handler(
       return res.status(400).json({ success: false });
     }
   }
+
+  res.status(405).json({ message: 'Method not allowed' });
 }

@@ -1,5 +1,5 @@
 .container {
-  position: fixed;
+  /* position: fixed;
   top: 1rem;
   right: 1rem;
 
@@ -10,7 +10,7 @@
   gap: 1rem;
   justify-content: right;
   align-items: center;
-  z-index: 10000;
+  z-index: 10000; */
 }
 
 .avatar {

@@ -1,6 +1,5 @@
 import { Button, ButtonGroup } from '@mui/material';
 import React from 'react';
-import styles from './CanvasToolbar.module.css';
 
 export interface CanvasToolbarItem {
   icon: React.ReactNode;
@@ -14,11 +13,7 @@ interface CanvasToolbarProps {
 
 const CanvasToolbar: React.FC<CanvasToolbarProps> = ({ items }) => {
   return (
-    <ButtonGroup
-      color="secondary"
-      className={styles.toolbar}
-      variant="contained"
-    >
+    <ButtonGroup color="secondary" variant="contained">
       {items.map((item, index) => {
         return (
           <Button

@@ -78,7 +78,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
             }}
           >
             {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
-            <MenuItem onClick={handleMyChalkboards}>My Chalkboards</MenuItem>
+            <MenuItem onClick={handleClose}>My Profile</MenuItem>
             <MenuItem onClick={handleSignOut}>Logout</MenuItem>
           </Menu>
         </div>
