@@ -13,5 +13,12 @@
   width: 100%;
   padding: 0 1rem;
   align-items: center;
+  height: 3rem;
   z-index: 10000;
+}
+
+.meta {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
 }
