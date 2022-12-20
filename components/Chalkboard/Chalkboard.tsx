@@ -28,12 +28,18 @@ const Chalkboard: React.FC = () => {
     React.useState<boolean>(false);
 
   const [canvasId, setCanvasId] = React.useState<string | null>(null);
+  const [canvasTitle, setCanvasTitle] = React.useState<string>('Untitled');
 
   useEffect(() => {
     const restoreCanvas = () => {
       const restoredData = localStorage.getItem('chalkboardData');
       if (restoredData) {
-        setChalkboardData(JSON.parse(restoredData));
+        const { components, title, canvasId } = JSON.parse(restoredData);
+
+        setChalkboardData(components);
+        setCanvasTitle(title);
+        setCanvasId(canvasId);
+
         localStorage.removeItem('chalkboardData');
       }
     };
@@ -80,10 +86,11 @@ const Chalkboard: React.FC = () => {
       onClick: async () => {
         const body = {
           components: chalkboardData,
-          title: 'test',
+          title: canvasTitle,
           canvasId,
         };
-        const response = await fetch('/api/canvas', {
+        const fetchUrl = canvasId ? `/api/canvas/${canvasId}` : '/api/canvas';
+        const response = await fetch(fetchUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -101,7 +108,12 @@ const Chalkboard: React.FC = () => {
   ];
 
   const localSave = () => {
-    localStorage.setItem('chalkboardData', JSON.stringify(chalkboardData));
+    const data = {
+      components: chalkboardData,
+      title: canvasTitle,
+      canvasId,
+    };
+    localStorage.setItem('chalkboardData', JSON.stringify(data));
   };
 
   const handleLogin = () => {
@@ -117,6 +129,7 @@ const Chalkboard: React.FC = () => {
   };
 
   const handleLoadCanvas = async (canvasId: string) => {
+    setChalkboardData([]);
     const response = await fetch(`/api/canvas/${canvasId}`);
     const { data, success } = await response.json();
     if (success) {

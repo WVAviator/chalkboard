@@ -20,8 +20,6 @@ export default async function handler(
     console.log('Session not found.');
     return res.status(401).json({ message: 'Unauthorized' });
   }
-  // const user = await UserModel.findOne({ email: session.user.email });
-  // console.log('Session found: ' + user);
 
   const { method } = req;
 
@@ -68,34 +66,7 @@ export default async function handler(
   }
 
   if (method === 'POST') {
-    console.log('Attempting to save canvas for user: ' + session.user.email);
     const saveData = { ...req.body, userEmail: session.user.email };
-
-    if (saveData.canvasId) {
-      console.log('Attempting to update canvas with id: ' + saveData.canvasId);
-      try {
-        const canvas = await CanvasModel.findById(saveData.canvasId);
-        if (canvas.userEmail !== session.user.email) {
-          console.log(
-            'Canvas found but unable to verify user. Canvas user: ' +
-              canvas.userEmail +
-              ', current user: ' +
-              session.user.email
-          );
-          return res.status(401).json({ message: 'Unauthorized' });
-        }
-
-        canvas.title = saveData.title;
-        canvas.components = saveData.components;
-        canvas.updatedAt = new Date();
-        await canvas.save();
-
-        return res.status(200).json({ success: true, data: canvas });
-      } catch (error) {
-        console.log('Error updating canvas: ', error);
-        return res.status(400).json({ success: false });
-      }
-    }
 
     console.log(
       'Attempting to create new canvas for user: ' + session.user.email

@@ -18,14 +18,44 @@ export default async function handler(
     return res.status(400).json({ message: 'Bad request' });
   }
 
-  console.log('Attempting to retrieve canvas with id: ' + canvasId);
-  const canvas = await CanvasModel.findById(canvasId);
-  if (canvas.userEmail !== session.user.email) {
-    console.log(
-      `Canvas found but unable to verify user. Canvas user: ${canvas.userEmail}, current user: ${session.user.email}`
-    );
-    return res.status(401).json({ message: 'Unauthorized' });
+  const { method } = req;
+
+  if (method === 'GET') {
+    console.log('Attempting to retrieve canvas with id: ' + canvasId);
+    const canvas = await CanvasModel.findById(canvasId);
+    if (canvas.userEmail !== session.user.email) {
+      console.log(
+        `Canvas found but unable to verify user. Canvas user: ${canvas.userEmail}, current user: ${session.user.email}`
+      );
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    console.log('Successfully retrieved canvas.');
+    return res.status(200).json({ success: true, data: canvas });
+  } else if (method === 'PATCH') {
+    const saveData = { ...req.body, userEmail: session.user.email };
+    console.log('Attempting to update canvas with id: ' + canvasId);
+
+    try {
+      const canvas = await CanvasModel.findById(canvasId);
+      if (canvas.userEmail !== session.user.email) {
+        console.log(
+          'Canvas found but unable to verify user. Canvas user: ' +
+            canvas.userEmail +
+            ', current user: ' +
+            session.user.email
+        );
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+
+      canvas.title = saveData.title;
+      canvas.components = saveData.components;
+      canvas.updatedAt = new Date();
+      await canvas.save();
+
+      return res.status(200).json({ success: true, data: canvas });
+    } catch (error) {
+      console.log('Error updating canvas: ', error);
+      return res.status(400).json({ success: false });
+    }
   }
-  console.log('Canvas found: ' + canvas);
-  return res.status(200).json({ success: true, data: canvas });
 }
