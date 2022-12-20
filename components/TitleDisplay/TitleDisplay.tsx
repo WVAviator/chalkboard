@@ -12,6 +12,8 @@ interface TitleDisplayProps {
 const TitleDisplay: React.FC<TitleDisplayProps> = ({ title, setTitle }) => {
   const [editing, setEditing] = React.useState<boolean>(false);
 
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
   };
@@ -22,6 +24,7 @@ const TitleDisplay: React.FC<TitleDisplayProps> = ({ title, setTitle }) => {
       setEditing(false);
     } else {
       setEditing(true);
+      setTimeout(() => inputRef.current?.focus(), 0);
     }
   };
 
@@ -35,6 +38,7 @@ const TitleDisplay: React.FC<TitleDisplayProps> = ({ title, setTitle }) => {
           id="title"
           variant="standard"
           onChange={handleChange}
+          inputRef={inputRef}
           value={title}
           color="secondary"
           disabled={!editing}
