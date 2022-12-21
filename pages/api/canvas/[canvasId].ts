@@ -49,9 +49,27 @@ export default async function handler(
         return res.status(401).json({ message: 'Unauthorized' });
       }
 
+      console.debug('Savedata: ', saveData.components[1].data);
+
       canvas.title = saveData.title;
       canvas.components = saveData.components;
       canvas.updatedAt = new Date();
+
+      // Mark each component as modified so that the nested changes are saved
+      saveData.components.forEach(
+        (component: { data?: any; props?: any }, index: number) => {
+          if (component.data) {
+            canvas.components[index].$set({ data: component.data });
+          }
+          if (component.props) {
+            canvas.components[index].$set({ props: component.props });
+          }
+        }
+      );
+      canvas.markModified('components');
+      await canvas.save();
+
+      canvas.markModified('components');
       await canvas.save();
 
       return res.status(200).json({ success: true, data: canvas });

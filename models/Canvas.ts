@@ -9,6 +9,7 @@ export interface CanvasData {
     type: string;
     props: any;
     data: any;
+    $set: any;
   }[];
   updatedAt: Date;
 }

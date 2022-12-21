@@ -1,7 +1,8 @@
-import { Button, Menu } from '@mui/material';
+import { Button, IconButton, Menu } from '@mui/material';
 import React from 'react';
-import { Chrome } from 'react-color';
+import { ChromePicker, ColorResult } from 'react-color';
 import styles from './ColorPicker.module.css';
+import ColorLensIcon from '@mui/icons-material/ColorLens';
 
 interface ColorPickerProps {
   color: string;
@@ -20,23 +21,22 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, setColor }) => {
     setAnchorEl(null);
   };
 
-  const handleChangeComplete = (color) => {
+  const handleChangeComplete = (color: ColorResult) => {
     setColor(color.hex);
   };
 
   return (
     <div>
-      <Button
+      <IconButton
         id="color-button"
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-        variant="contained"
-        color="secondary"
+        size="large"
       >
-        <div className={styles.sample} style={{ backgroundColor: color }}></div>
-      </Button>
+        <ColorLensIcon style={{ color: color }} />
+      </IconButton>
       <Menu
         id="color-menu"
         anchorEl={anchorEl}
@@ -46,7 +46,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, setColor }) => {
           'aria-labelledby': 'color-button',
         }}
       >
-        <Chrome
+        <ChromePicker
           color={color}
           onChangeComplete={handleChangeComplete}
           disableAlpha

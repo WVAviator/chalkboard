@@ -1,11 +1,13 @@
 import Editor, { Monaco } from '@monaco-editor/react';
-import React from 'react';
+import React, { MouseEvent, useEffect } from 'react';
 import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
 import PaintableDiv, { PaintableDivData } from '../PaintableDiv/PaintableDiv';
 import styles from './PaintableCodeEditor.module.css';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { Button, CircularProgress } from '@mui/material';
-import CodeEditorModal, { CodeContext } from '../CodeEditorModal/CodeEditorModal';
+import CodeEditorModal, {
+  CodeContext,
+} from '../CodeEditorModal/CodeEditorModal';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 export interface PaintableCodeEditorData extends PaintableDivData {
@@ -13,6 +15,14 @@ export interface PaintableCodeEditorData extends PaintableDivData {
 }
 
 interface PaintableCodeEditorProps extends PaintableComponentProps {}
+
+const defaultCodeContext: CodeContext = {
+  main: 'const add = (a, b) => {\n  return a + b;\n}\n\nconsole.log(add(1, 2));\n',
+  before:
+    '// Code you write here will be executed \n// *before* any visible code.\n',
+  after:
+    '// Code you write here will be executed \n// *after* any visible code.\n',
+};
 
 const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
   createEvent,
@@ -24,24 +34,20 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
   const [consoleOutput, setConsoleOutput] = React.useState<string[]>([]);
   const [loadingConsoleOutput, setLoadingConsoleOutput] =
     React.useState<boolean>(false);
-    const [modalEditorOpen, setModalEditorOpen] = React.useState<boolean>(false);
+  const [modalEditorOpen, setModalEditorOpen] = React.useState<boolean>(false);
 
-  const handleEditorMount = (editor: any) => {
-    const code = editor.getValue();
-    updateCodeContext({
-      main: code,
-      before: '// Code you write here will be executed *before* any visible code in this editor block.\n',
-      after: '// Code you write here will be executed *after* any visible code in this editor block.\n'
-    });
-  };
+  useEffect(() => {
+    if (!createEvent) return;
+    setData({ ...data, codeContext: defaultCodeContext });
+  }, []);
 
   const handleEditorChange = (value: string | undefined) => {
-    updateCodeContext({...data.codeContext, main: value});
+    setData({ ...data, codeContext: { ...data.codeContext, main: value } });
   };
 
-  const updateCodeContext = (newContext: CodeContext) => {
-    setData({ ...data, codeContext: newContext });
-  }
+  const updateCodeContext = (newCodeContext: CodeContext) => {
+    setData({ ...data, codeContext: newCodeContext });
+  };
 
   const handleCodeExecute = async () => {
     setLoadingConsoleOutput(true);
@@ -79,25 +85,41 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
       {...rest}
     >
       <div className={styles.wrapper}>
-        <div className={styles.topBar} style={{ backgroundColor: color }}><Button onClick={() => setModalEditorOpen(true)}><OpenInNewIcon/></Button></div>
+        <div className={styles.topBar} style={{ backgroundColor: color }}>
+          <Button
+            onClick={(event: MouseEvent) => {
+              event.stopPropagation();
+              console.log("I'm being clicked!");
+              setModalEditorOpen(true);
+            }}
+            onPointerDown={(event) => event.stopPropagation()}
+          >
+            <OpenInNewIcon />
+          </Button>
+        </div>
         <div
           className={styles.editorContainer}
           onPointerDown={(event) => event.stopPropagation()}
         >
-          <Editor
-            defaultLanguage="javascript"
-            height="100%"
-            theme="vs-dark"
-            defaultValue={
-              createEvent
-                ? `const add = (a, b) => {\n  return a + b;\n}\n\nconsole.log(add(1, 2));\n`
-                : data.code
-            }
-            value={data.codeContext.main}
-            onMount={handleEditorMount}
-            onChange={handleEditorChange}
+          {data.codeContext && (
+            <Editor
+              defaultLanguage="javascript"
+              height="100%"
+              width="100%"
+              theme="vs-dark"
+              // defaultValue={
+              //   defaultCodeContext.main
+              // }
+              value={data.codeContext.main}
+              onChange={handleEditorChange}
+            />
+          )}
+          <CodeEditorModal
+            open={modalEditorOpen}
+            setOpen={setModalEditorOpen}
+            codeContext={data.codeContext || defaultCodeContext}
+            setCodeContext={updateCodeContext}
           />
-          <CodeEditorModal open={modalEditorOpen} setOpen={setModalEditorOpen} codeContext={data.codeContext} setCodeContext={updateCodeContext} />
           <div className={styles.controls} onClick={handleCodeExecute}>
             {loadingConsoleOutput ? (
               <CircularProgress size="1.25rem" thickness={6} />
