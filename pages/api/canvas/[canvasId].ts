@@ -49,32 +49,36 @@ export default async function handler(
         return res.status(401).json({ message: 'Unauthorized' });
       }
 
-      console.debug('Savedata: ', saveData.components[1].data);
-
       canvas.title = saveData.title;
-      canvas.components = saveData.components;
+      canvas.set({ components: saveData.components });
       canvas.updatedAt = new Date();
 
-      // Mark each component as modified so that the nested changes are saved
-      saveData.components.forEach(
-        (component: { data?: any; props?: any }, index: number) => {
-          if (component.data) {
-            canvas.components[index].$set({ data: component.data });
-          }
-          if (component.props) {
-            canvas.components[index].$set({ props: component.props });
-          }
-        }
-      );
-      canvas.markModified('components');
-      await canvas.save();
-
-      canvas.markModified('components');
-      await canvas.save();
+      await canvas.save({});
 
       return res.status(200).json({ success: true, data: canvas });
     } catch (error) {
       console.log('Error updating canvas: ', error);
+      return res.status(400).json({ success: false });
+    }
+  }
+
+  if (method === 'DELETE') {
+    console.log('Attempting to delete canvas with id: ' + canvasId);
+    try {
+      const canvas = await CanvasModel.findById(canvasId);
+      if (canvas.userEmail !== session.user.email) {
+        console.log(
+          'Canvas found but unable to verify user. Canvas user: ' +
+            canvas.userEmail +
+            ', current user: ' +
+            session.user.email
+        );
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+      await canvas.delete();
+      return res.status(200).json({ success: true });
+    } catch (error) {
+      console.log('Error deleting canvas: ', error);
       return res.status(400).json({ success: false });
     }
   }

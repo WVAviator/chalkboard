@@ -26,43 +26,29 @@ export default async function handler(
   await dbConnect();
 
   if (method === 'GET') {
-    const { canvasId } = req.query;
-    if (canvasId) {
-      console.log('Attempting to retrieve canvas with id: ' + canvasId);
-      const canvas = await CanvasModel.findById(canvasId);
-      if (canvas.userEmail !== session.user.email) {
-        console.log(
-          `Canvas found but unable to verify user. Canvas user: ${canvas.userEmail}, current user: ${session.user.email}`
-        );
-        return res.status(401).json({ message: 'Unauthorized' });
-      }
-      console.log('Canvas found: ' + canvas);
-      return res.status(200).json({ success: true, data: canvas });
-    } else {
-      console.log(
-        'Attempting to retrieve all canvases for user: ' + session.user.email
-      );
-      const canvases = await CanvasModel.find({
-        userEmail: session.user.email,
-      });
+    console.log(
+      'Attempting to retrieve all canvases for user: ' + session.user.email
+    );
+    const canvases = await CanvasModel.find({
+      userEmail: session.user.email,
+    });
 
-      const formattedData: ChalkboardFile[] = canvases.map((canvas) => {
-        return {
-          id: canvas._id.toString(),
-          title: canvas.title,
-          lastModified: canvas.updatedAt,
-        } as ChalkboardFile;
-      });
+    const formattedData: ChalkboardFile[] = canvases.map((canvas) => {
+      return {
+        id: canvas._id.toString(),
+        title: canvas.title,
+        lastModified: canvas.updatedAt,
+      } as ChalkboardFile;
+    });
 
-      console.log(
-        'Found ' +
-          formattedData.length +
-          ' canvases for user: ' +
-          session.user.email
-      );
+    console.log(
+      'Found ' +
+        formattedData.length +
+        ' canvases for user: ' +
+        session.user.email
+    );
 
-      return res.status(200).json({ success: true, data: formattedData });
-    }
+    return res.status(200).json({ success: true, data: formattedData });
   }
 
   if (method === 'POST') {

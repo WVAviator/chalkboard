@@ -54,6 +54,7 @@ const defaultPaintableComponentMap: PaintableComponentMap = {
   svg: PaintableSVG,
   div: PaintableDiv,
   code: PaintableCodeEditor,
+  none: () => null,
 };
 
 interface ComponentCanvasProps {
@@ -82,6 +83,7 @@ const ComponentCanvas: React.FC<ComponentCanvasProps> = ({
     if (!activeComponent) {
       return;
     }
+    if (event.buttons !== 1) return;
 
     setComponents((components) => [
       ...components,
@@ -100,6 +102,13 @@ const ComponentCanvas: React.FC<ComponentCanvasProps> = ({
       onPointerDown={handlePointerDown}
     >
       {components.map((component, index) => {
+        if (!paintableComponentMap[component.type]) {
+          console.error(
+            `ComponentCanvas: No component found for type: ${component.type}. `
+          );
+          return null;
+        }
+
         return React.createElement(paintableComponentMap[component.type], {
           ...component.props,
           key: index,

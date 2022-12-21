@@ -1,4 +1,4 @@
-import { Button, TextField } from '@mui/material';
+import { Button, IconButton, TextField } from '@mui/material';
 import React, { useEffect } from 'react';
 import styles from './TitleDisplay.module.css';
 import EditIcon from '@mui/icons-material/Edit';
@@ -18,54 +18,60 @@ const TitleDisplay: React.FC<TitleDisplayProps> = ({ title, setTitle }) => {
     setTitle(event.target.value);
   };
 
-  const handleToggleEdit = (event: React.FormEvent) => {
+  const handleDisableEdit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (editing) {
-      setEditing(false);
-    } else {
-      setEditing(true);
-      setTimeout(() => inputRef.current?.focus(), 0);
-    }
+    setEditing(false);
+  };
+
+  const handleEnableEdit = (event: React.FormEvent) => {
+    event.preventDefault();
+    setEditing(true);
+    setTimeout(() => {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }, 0);
   };
 
   return (
     <div className={styles.container}>
-      <form onSubmit={handleToggleEdit}>
-        <Button onClick={handleToggleEdit}>
-          <EditIcon color="secondary" fontSize="small" />
-        </Button>
-        <TextField
-          id="title"
-          variant="standard"
-          onChange={handleChange}
-          inputRef={inputRef}
-          value={title}
-          color="secondary"
-          disabled={!editing}
-          sx={{
-            input: {
-              color: 'secondary.main',
-            },
-
-            '& .MuiInput-underline:before': {
-              borderBottomColor: editing ? 'secondary.main' : 'transparent',
-              color: 'secondary.main',
-            },
-            '& .MuiInput-underline:after': {
-              borderBottomColor: editing ? 'secondary.main' : 'transparent',
-              color: 'secondary.main',
-            },
-            '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
-              borderBottomColor: editing ? 'secondary.main' : 'transparent',
-              color: 'secondary.main',
-            },
-            '& .MuiInputBase-input.Mui-disabled': {
-              WebkitTextFillColor: '#7B27A2',
-              color: 'secondary.main',
-            },
-          }}
+      <IconButton aria-label="edit" onClick={handleEnableEdit} size="small">
+        <EditIcon
+          sx={{ color: '#FFFFFF30', transform: 'translateY(-2.25px)' }}
+          fontSize="small"
         />
-      </form>
+      </IconButton>
+      <TextField
+        id="title"
+        variant="standard"
+        onChange={handleChange}
+        inputRef={inputRef}
+        value={title}
+        color="secondary"
+        onBlur={handleDisableEdit}
+        disabled={!editing}
+        sx={{
+          input: {
+            color: 'white',
+          },
+
+          '& .MuiInput-underline:before': {
+            borderBottomColor: editing ? 'white' : 'transparent',
+            color: 'white',
+          },
+          '& .MuiInput-underline:after': {
+            borderBottomColor: editing ? 'white' : 'transparent',
+            color: 'white',
+          },
+          '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
+            borderBottomColor: editing ? 'white' : 'transparent',
+            color: 'white',
+          },
+          '& .MuiInputBase-input.Mui-disabled': {
+            WebkitTextFillColor: '#FFFFFF',
+            color: 'white',
+          },
+        }}
+      />
     </div>
   );
 };

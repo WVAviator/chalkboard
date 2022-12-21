@@ -4,13 +4,15 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
 } from '@mui/material';
 import NoteAltIcon from '@mui/icons-material/NoteAlt';
-import React from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
+import React, { MouseEvent } from 'react';
 import styles from './MyChalkboards.module.css';
 
 interface ChalkboardFile {
@@ -41,6 +43,21 @@ const MyChalkboards: React.FC<MyChalkboardsProps> = ({
     getChalkboards();
   }, [open]);
 
+  const handleDelete = async (event: MouseEvent, id: string) => {
+    event.stopPropagation();
+    const response = await fetch(`/api/canvas/${id}`, {
+      method: 'DELETE',
+    });
+    const { success } = await response.json();
+    if (success) {
+      setChalkboards((chalkboards) =>
+        chalkboards.filter((chalkboard) => chalkboard.id !== id)
+      );
+    } else {
+      console.log('Error deleting chalkboard');
+    }
+  };
+
   return (
     <Dialog open={open} scroll="paper" onClose={() => setOpen(false)}>
       <DialogTitle>My Chalkboards</DialogTitle>
@@ -64,8 +81,17 @@ const MyChalkboards: React.FC<MyChalkboardsProps> = ({
                   </ListItemAvatar>
                   <ListItemText
                     primary={chalkboard.title}
-                    secondary={`Last modified: ${chalkboard.lastModified}`}
+                    secondary={`Last modified: ${new Date(
+                      chalkboard.lastModified
+                    ).toLocaleDateString()}`}
                   />
+                  <IconButton
+                    size="small"
+                    aria-label="delete"
+                    onClick={(event) => handleDelete(event, chalkboard.id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
                 </ListItem>
               );
             })

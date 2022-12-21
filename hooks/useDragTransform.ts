@@ -30,8 +30,8 @@ const useDragTransform = (
   const { setActiveComponent } = React.useContext(ActiveComponentContext);
 
   const handlePointerDown = (event: React.PointerEvent) => {
+    if (event.buttons !== 1) return;
     setIsDragging(true);
-    setActiveComponent('FreehandSVG');
     setDragStartPos({
       pointerX: event.clientX - canvasRect.left,
       pointerY: event.clientY - canvasRect.top,

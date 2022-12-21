@@ -9,6 +9,8 @@ import ComponentCanvas, {
 import styles from './Chalkboard.module.css';
 import CreateIcon from '@mui/icons-material/Create';
 import SquareIcon from '@mui/icons-material/Square';
+import Crop75Icon from '@mui/icons-material/Crop75';
+import GestureIcon from '@mui/icons-material/Gesture';
 import CodeIcon from '@mui/icons-material/Code';
 import SaveIcon from '@mui/icons-material/Save';
 import CanvasToolbar from '../CanvasToolbar/CanvasToolbar';
@@ -25,14 +27,9 @@ const Chalkboard: React.FC = () => {
   const [activeComponent, setActiveComponent] = React.useState<string | null>(
     null
   );
-  const [activeComponentProps, setActiveComponentProps] =
-    React.useState<PaintableComponentProps>({
-      color: '#FFFFFF',
-      canvasRect: null,
-      data: [],
-      setData: () => {},
-      createEvent: null,
-    });
+  const [activeComponentProps, setActiveComponentProps] = React.useState<any>({
+    color: '#FFFFFF',
+  });
   const [myChalkboardsModalOpen, setMyChalkboardsModalOpen] =
     React.useState<boolean>(false);
 
@@ -57,7 +54,7 @@ const Chalkboard: React.FC = () => {
 
   const toolbarItems = [
     {
-      icon: <CreateIcon />,
+      icon: <GestureIcon />,
       selected: activeComponent === 'svg',
       onClick: () => {
         if (activeComponent === 'svg') {
@@ -68,7 +65,7 @@ const Chalkboard: React.FC = () => {
       },
     },
     {
-      icon: <SquareIcon />,
+      icon: <Crop75Icon />,
       selected: activeComponent === 'div',
       onClick: () => {
         if (activeComponent === 'div') {
@@ -203,7 +200,7 @@ const Chalkboard: React.FC = () => {
           <ColorPicker
             color={activeComponentProps.color}
             setColor={(color) => {
-              setActiveComponentProps((activeComponentProps) => ({
+              setActiveComponentProps((activeComponentProps: any) => ({
                 ...activeComponentProps,
                 color,
               }));

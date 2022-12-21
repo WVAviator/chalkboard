@@ -49,6 +49,11 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
     setData({ ...data, codeContext: newCodeContext });
   };
 
+  const handleOpenModalEditor = (event: MouseEvent) => {
+    event.stopPropagation();
+    setModalEditorOpen(true);
+  };
+
   const handleCodeExecute = async () => {
     setLoadingConsoleOutput(true);
 
@@ -87,11 +92,7 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
       <div className={styles.wrapper}>
         <div className={styles.topBar} style={{ backgroundColor: color }}>
           <Button
-            onClick={(event: MouseEvent) => {
-              event.stopPropagation();
-              console.log("I'm being clicked!");
-              setModalEditorOpen(true);
-            }}
+            onClick={handleOpenModalEditor}
             onPointerDown={(event) => event.stopPropagation()}
           >
             <OpenInNewIcon />
