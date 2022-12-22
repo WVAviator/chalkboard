@@ -15,6 +15,7 @@ const PaintableText: React.FC<PaintableTextProps> = ({
   canvasRect,
   color = '#FFFFFF',
   textSize = 'medium',
+  ...rest
 }) => {
   const [editing, setEditing] = React.useState<boolean>(false);
   const [quickClick, setQuickClick] = React.useState<boolean>(false);
@@ -63,6 +64,7 @@ const PaintableText: React.FC<PaintableTextProps> = ({
       minHeight={divHeight}
       minWidth={divWidth}
       shadow="dragonly"
+      {...rest}
     >
       <textarea
         className={styles.textarea}

@@ -5,6 +5,7 @@ import { ActiveComponentContext } from '../ActiveComponentProvider/ActiveCompone
 import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
 import { getSvgPathFromStroke } from './utils';
 import styles from './PaintableSVG.module.css';
+import withRightClickMenu from '../../hocs/withRightClickMenu';
 
 const defaultOptions = {
   size: 5,
@@ -104,4 +105,4 @@ const PaintableSVG: React.FC<PaintableSVGProps> = ({
   );
 };
 
-export default PaintableSVG;
+export default withRightClickMenu(PaintableSVG);

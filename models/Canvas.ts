@@ -9,7 +9,7 @@ export interface CanvasData {
     type: string;
     props: any;
     data: any;
-    $set: any;
+    id: string;
   }[];
   updatedAt: Date;
 }
@@ -35,6 +35,10 @@ const canvasSchema = new mongoose.Schema<CanvasData>({
       },
       props: mongoose.Schema.Types.Mixed,
       data: mongoose.Schema.Types.Mixed,
+      id: {
+        type: String,
+        required: true,
+      },
     },
   ],
   updatedAt: {

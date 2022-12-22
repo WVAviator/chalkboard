@@ -1,4 +1,5 @@
 import React from 'react';
+import withRightClickMenu from '../../hocs/withRightClickMenu';
 import useDragTransform, { Transform } from '../../hooks/useDragTransform';
 import { ActiveComponentContext } from '../ActiveComponentProvider/ActiveComponentProvider';
 import {
@@ -128,4 +129,4 @@ const PaintableDiv: React.FC<PaintableDivProps> = ({
   );
 };
 
-export default PaintableDiv;
+export default withRightClickMenu(PaintableDiv);

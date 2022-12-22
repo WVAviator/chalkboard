@@ -10,6 +10,7 @@ import styles from './ComponentCanvas.module.css';
  */
 export interface PaintableComponentData {
   type: string;
+  id: string;
   props?: any;
   data: any;
 }
@@ -39,6 +40,9 @@ export interface PaintableComponentProps {
    * The primary color of the selected element.
    */
   color: string;
+
+  setComponents: React.Dispatch<React.SetStateAction<PaintableComponentData[]>>;
+  id: string;
 }
 
 /**
@@ -87,11 +91,18 @@ const ComponentCanvas: React.FC<ComponentCanvasProps> = ({
     }
     if (event.buttons !== 1) return;
 
+    const randomId = Math.random().toString(36).slice(2, 7);
+
     setComponents((components) => [
       ...components,
       {
         type: activeComponent,
-        props: { ...activeComponentProps, createEvent: event },
+        props: {
+          ...activeComponentProps,
+          createEvent: event,
+          setComponents: setComponents,
+        },
+        id: `${activeComponent}-${randomId}`,
         data: [],
       },
     ]);
@@ -113,7 +124,7 @@ const ComponentCanvas: React.FC<ComponentCanvasProps> = ({
 
         return React.createElement(paintableComponentMap[component.type], {
           ...component.props,
-          key: index,
+          key: component.id,
           data: component.data,
           setData: (newData: any) => {
             const newComponents = [...components];
@@ -122,6 +133,8 @@ const ComponentCanvas: React.FC<ComponentCanvasProps> = ({
             setComponents(newComponents);
           },
           canvasRect: canvasRef.current?.getBoundingClientRect(),
+          setComponents: setComponents,
+          id: component.id,
         });
       })}
     </div>
