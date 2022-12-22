@@ -152,9 +152,10 @@ const Chalkboard: React.FC = () => {
           },
           body: JSON.stringify(body),
         });
-        const data = await response.json();
-        if (data.success) {
+        const { data, success } = await response.json();
+        if (success) {
           console.log('Canvas saved');
+          setCanvasId(data._id);
           setToastNotification({
             message: 'Saved successfully!',
             open: true,

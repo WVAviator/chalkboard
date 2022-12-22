@@ -50,8 +50,11 @@ const TextSizePicker: React.FC<TextSizePickerProps> = ({ size, setSize }) => {
         {['small', 'medium', 'large'].map((textSize) => {
           return (
             <MenuItem
+              key={textSize}
               onClick={() => handleChange(textSize as TextSize)}
-                style={{ backgroundColor: size === textSize ? 'lightgray' : 'white'}}
+              style={{
+                backgroundColor: size === textSize ? 'lightgray' : 'white',
+              }}
             >
               <FormatSizeIcon fontSize={textSize as TextSize} />
             </MenuItem>
