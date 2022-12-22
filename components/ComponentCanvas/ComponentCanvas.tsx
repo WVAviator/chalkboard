@@ -2,6 +2,7 @@ import React from 'react';
 import PaintableCodeEditor from '../PaintableCodeEditor/PaintableCodeEditor';
 import PaintableDiv from '../PaintableDiv/PaintableDiv';
 import PaintableSVG from '../PaintableSVG/PaintableSVG';
+import PaintableText from '../PaintableText/PaintableText';
 import styles from './ComponentCanvas.module.css';
 
 /**
@@ -54,6 +55,7 @@ const defaultPaintableComponentMap: PaintableComponentMap = {
   svg: PaintableSVG,
   div: PaintableDiv,
   code: PaintableCodeEditor,
+  text: PaintableText,
   none: () => null,
 };
 

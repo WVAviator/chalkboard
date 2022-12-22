@@ -16,6 +16,8 @@ interface PaintableDivProps extends PaintableComponentProps {
   children?: React.ReactNode;
   minWidth?: number;
   minHeight?: number;
+  onCreated?: () => void;
+  shadow?: 'none' | 'default' | 'dragonly';
 }
 
 const PaintableDiv: React.FC<PaintableDivProps> = ({
@@ -27,6 +29,8 @@ const PaintableDiv: React.FC<PaintableDivProps> = ({
   canvasRect,
   minWidth = 0,
   minHeight = 0,
+  onCreated,
+  shadow = 'default',
 }) => {
   const [position, setPosition] = React.useState(
     createEvent
@@ -79,7 +83,20 @@ const PaintableDiv: React.FC<PaintableDivProps> = ({
       size,
       transform,
     });
+    onCreated && onCreated();
   };
+
+  const boxShadow = React.useMemo(() => {
+    return {
+      default:
+        'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px',
+      none: 'none',
+      dragonly:
+        isDragging || isSizing
+          ? 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'
+          : 'none',
+    };
+  }, [isDragging, isSizing]);
 
   return (
     <div
@@ -102,6 +119,7 @@ const PaintableDiv: React.FC<PaintableDivProps> = ({
           pointerEvents: activeComponent ? 'none' : 'all',
           transform: `translateX(${transform.x}px) translateY(${transform.y}px)`,
           backgroundColor: color,
+          boxShadow: boxShadow[shadow],
         }}
       >
         {children}

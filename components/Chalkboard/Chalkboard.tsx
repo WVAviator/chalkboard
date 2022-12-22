@@ -7,8 +7,8 @@ import ComponentCanvas, {
   PaintableComponentProps,
 } from '../ComponentCanvas/ComponentCanvas';
 import styles from './Chalkboard.module.css';
-import CreateIcon from '@mui/icons-material/Create';
-import SquareIcon from '@mui/icons-material/Square';
+import FormatSizeIcon from '@mui/icons-material/FormatSize';
+import CloseIcon from '@mui/icons-material/Close';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import Crop75Icon from '@mui/icons-material/Crop75';
@@ -22,6 +22,11 @@ import MyChalkboards from '../MyChalkboards/MyChalkboards';
 import FileMenu from '../FileMenu/FileMenu';
 import TitleDisplay from '../TitleDisplay/TitleDisplay';
 import ColorPicker from '../ColorPicker/ColorPicker';
+import TextSizePicker from '../TextSizePicker/TextSizePicker';
+import { Alert, IconButton, Snackbar } from '@mui/material';
+import ToastNotification, {
+  ToastNotificationData,
+} from '../ToastNotification/ToastNotification';
 
 const Chalkboard: React.FC = () => {
   const [chalkboardData, setChalkboardData] = React.useState<
@@ -32,12 +37,19 @@ const Chalkboard: React.FC = () => {
   );
   const [activeComponentProps, setActiveComponentProps] = React.useState<any>({
     color: '#FFFFFF',
+    textSize: 'medium',
   });
   const [myChalkboardsModalOpen, setMyChalkboardsModalOpen] =
     React.useState<boolean>(false);
 
   const [canvasId, setCanvasId] = React.useState<string | null>(null);
   const [canvasTitle, setCanvasTitle] = React.useState<string>('Untitled');
+  const [toastNotification, setToastNotification] =
+    React.useState<ToastNotificationData>({
+      message: '',
+      open: false,
+      severity: 'success',
+    });
 
   useEffect(() => {
     const restoreCanvas = () => {
@@ -89,6 +101,17 @@ const Chalkboard: React.FC = () => {
         }
       },
     },
+    {
+      icon: <FormatSizeIcon />,
+      selected: activeComponent === 'text',
+      onClick: () => {
+        if (activeComponent === 'text') {
+          setActiveComponent(null);
+        } else {
+          setActiveComponent('text');
+        }
+      },
+    },
   ];
 
   const fileMenuOptions = [
@@ -97,6 +120,11 @@ const Chalkboard: React.FC = () => {
       onClick: () => {
         setChalkboardData([]);
         setCanvasId(null);
+        setActiveComponent(null);
+        setActiveComponentProps({
+          color: '#FFFFFF',
+          textSize: 'medium',
+        });
         setCanvasTitle('Untitled');
       },
       icon: <NoteAddIcon />,
@@ -127,8 +155,18 @@ const Chalkboard: React.FC = () => {
         const data = await response.json();
         if (data.success) {
           console.log('Canvas saved');
+          setToastNotification({
+            message: 'Saved successfully!',
+            open: true,
+            severity: 'success',
+          });
         } else {
           console.log('Error saving canvas');
+          setToastNotification({
+            message: 'Error occurred while saving.',
+            open: true,
+            severity: 'error',
+          });
         }
       },
       icon: <SaveIcon />,
@@ -150,8 +188,18 @@ const Chalkboard: React.FC = () => {
         const data = await response.json();
         if (data.success) {
           console.log('Canvas saved');
+          setToastNotification({
+            message: 'Saved successfully!',
+            open: true,
+            severity: 'success',
+          });
         } else {
           console.log('Error saving canvas');
+          setToastNotification({
+            message: 'Error occurred while saving.',
+            open: true,
+            severity: 'error',
+          });
         }
       },
       icon: <SaveAsIcon />,
@@ -192,6 +240,11 @@ const Chalkboard: React.FC = () => {
       setCanvasId(data._id);
     } else {
       console.log('Error loading canvas');
+      setToastNotification({
+        message: 'Error occurred while loading.',
+        open: true,
+        severity: 'error',
+      });
     }
   };
 
@@ -213,6 +266,15 @@ const Chalkboard: React.FC = () => {
               }));
             }}
           />
+          <TextSizePicker
+            size={activeComponentProps.textSize}
+            setSize={(size) =>
+              setActiveComponentProps((activeComponentProps: any) => ({
+                ...activeComponentProps,
+                textSize: size,
+              }))
+            }
+          />
         </div>
         <UserProfile
           onLoginAttempt={handleLogin}
@@ -233,6 +295,10 @@ const Chalkboard: React.FC = () => {
           setComponents={setChalkboardData}
         />
       </ActiveComponentProvider>
+      <ToastNotification
+        toastNotification={toastNotification}
+        setToastNotification={setToastNotification}
+      />
     </div>
   );
 };
