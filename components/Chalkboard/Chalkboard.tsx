@@ -9,11 +9,14 @@ import ComponentCanvas, {
 import styles from './Chalkboard.module.css';
 import CreateIcon from '@mui/icons-material/Create';
 import SquareIcon from '@mui/icons-material/Square';
+import SaveAsIcon from '@mui/icons-material/SaveAs';
+import FileOpenIcon from '@mui/icons-material/FileOpen';
 import Crop75Icon from '@mui/icons-material/Crop75';
 import GestureIcon from '@mui/icons-material/Gesture';
 import CodeIcon from '@mui/icons-material/Code';
 import SaveIcon from '@mui/icons-material/Save';
 import CanvasToolbar from '../CanvasToolbar/CanvasToolbar';
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import UserProfile from '../UserProfile/UserProfile';
 import MyChalkboards from '../MyChalkboards/MyChalkboards';
 import FileMenu from '../FileMenu/FileMenu';
@@ -96,12 +99,14 @@ const Chalkboard: React.FC = () => {
         setCanvasId(null);
         setCanvasTitle('Untitled');
       },
+      icon: <NoteAddIcon />,
     },
     {
       label: 'Open',
       onClick: () => {
         setMyChalkboardsModalOpen(true);
       },
+      icon: <FileOpenIcon />,
     },
     {
       label: 'Save',
@@ -126,6 +131,7 @@ const Chalkboard: React.FC = () => {
           console.log('Error saving canvas');
         }
       },
+      icon: <SaveIcon />,
     },
     {
       label: 'Save As',
@@ -148,6 +154,7 @@ const Chalkboard: React.FC = () => {
           console.log('Error saving canvas');
         }
       },
+      icon: <SaveAsIcon />,
     },
   ];
 

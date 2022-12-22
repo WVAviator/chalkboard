@@ -1,9 +1,20 @@
-import { Button, Menu, MenuItem } from '@mui/material';
+import {
+  Button,
+  Menu,
+  MenuItem,
+  SpeedDial,
+  SpeedDialAction,
+  SpeedDialIcon,
+} from '@mui/material';
 import React from 'react';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import CloseIcon from '@mui/icons-material/Close';
+import styles from './FileMenu.module.css';
 
 interface FileMenuOption {
   label: string;
   onClick: () => void;
+  icon: React.ReactNode;
 }
 
 interface FileMenuProps {
@@ -11,51 +22,24 @@ interface FileMenuProps {
 }
 
 const FileMenu: React.FC<FileMenuProps> = ({ options }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   return (
-    <div>
-      <Button
-        id="file-button"
-        aria-controls={open ? 'file-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
-        variant="contained"
-        color="secondary"
-      >
-        File
-      </Button>
-      <Menu
-        id="file-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'file-button',
-        }}
+    <div className={styles.container}>
+      <SpeedDial
+        ariaLabel="SpeedDial openIcon example"
+        icon={<FolderOpenIcon />}
+        openIcon={<CloseIcon />}
+        direction="down"
+        sx={{ position: 'absolute', top: '-1.5rem', left: 0 }}
       >
         {options.map((option) => (
-          <MenuItem
+          <SpeedDialAction
             key={option.label}
-            onClick={() => {
-              setAnchorEl(null);
-              option.onClick();
-            }}
-          >
-            {option.label}
-          </MenuItem>
+            icon={option.icon}
+            tooltipTitle={option.label}
+            onClick={option.onClick}
+          />
         ))}
-      </Menu>
+      </SpeedDial>
     </div>
   );
 };
