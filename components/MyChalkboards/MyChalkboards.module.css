@@ -1,0 +1,12 @@
+.listItem {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  min-width: 25rem;
+}
+
+.listItem:hover {
+  background-color: #f5f5f5;
+}
