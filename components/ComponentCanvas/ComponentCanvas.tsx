@@ -9,9 +9,24 @@ import styles from './ComponentCanvas.module.css';
  * PaintableComponentData is the base data structure that is used to store the data for each item drawn on the canvas.
  */
 export interface PaintableComponentData {
+  /**
+   * The type of the component. This is used to tie the data to a React component through the paintableComponentMap.
+   */
   type: string;
+
+  /**
+   * The id of the component. This is used to uniquely identify the component.
+   */
   id: string;
-  props?: any;
+
+  /**
+   * The props of the component. This is used to store and pass props to the React component.
+   */
+  props?: PaintableComponentProps;
+
+  /**
+   * The data of the component. This is used to store any data that the component needs to be parsed.
+   */
   data: any;
 }
 
@@ -41,7 +56,14 @@ export interface PaintableComponentProps {
    */
   color: string;
 
+  /**
+   * The setComponents function is used to update the components stored in the canvas. This is used by the component to remove itself or update its order in the canvas.
+   */
   setComponents: React.Dispatch<React.SetStateAction<PaintableComponentData[]>>;
+
+  /**
+   * The id of the component. This is used to uniquely identify the component and differentiate it from other components in calls to setComponents.
+   */
   id: string;
 }
 
@@ -64,10 +86,25 @@ const defaultPaintableComponentMap: PaintableComponentMap = {
 };
 
 interface ComponentCanvasProps {
+  /**
+   * The activeComponent is the type of the component that is currently being drawn on the canvas.
+   */
   activeComponent: string | null;
+  /**
+   * The activeComponentProps are the additional props that are passed to the activeComponent when it is created.
+   */
   activeComponentProps?: any;
+  /**
+   * The setComponents function is used to update the components stored in the canvas.
+   */
   setComponents: React.Dispatch<React.SetStateAction<PaintableComponentData[]>>;
+  /**
+   * The components are the components that are currently drawn on the canvas.
+   */
   components: PaintableComponentData[];
+  /**
+   * The customPaintableComponents are any custom components that can be drawn on the canvas.
+   */
   customPaintableComponents?: PaintableComponentMap;
 }
 
