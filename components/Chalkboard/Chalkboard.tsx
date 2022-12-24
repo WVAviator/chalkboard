@@ -16,34 +16,21 @@ import FileMenu from '../FileMenu/FileMenu';
 import TitleDisplay from '../TitleDisplay/TitleDisplay';
 import ColorPicker from '../ColorPicker/ColorPicker';
 import TextSizePicker from '../TextSizePicker/TextSizePicker';
-import ToastNotification, {
-  ToastNotificationData,
-} from '../ToastNotification/ToastNotification';
+import ToastNotification from '../ToastNotification/ToastNotification';
 import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
+import { useToastNotificationStore } from '../../hooks/useToastNotificationStore';
 
 const Chalkboard: React.FC = () => {
   const chalkboardState = useChalkboardDataStore();
-
-  // const [activeComponent, setActiveComponent] = React.useState<string | null>(
-  //   null
-  // );
-  // const [activeComponentProps, setActiveComponentProps] = React.useState<any>({
-  //   color: '#FFFFFF',
-  //   textSize: 'medium',
-  // });
-
   const activeComponentState = useActiveComponentStore();
 
   const [myChalkboardsModalOpen, setMyChalkboardsModalOpen] =
     React.useState<boolean>(false);
 
-  const [toastNotification, setToastNotification] =
-    React.useState<ToastNotificationData>({
-      message: '',
-      open: false,
-      severity: 'success',
-    });
+  const showToastNotification = useToastNotificationStore(
+    (state) => state.showToastNotification
+  );
 
   useEffect(() => {
     chalkboardState.loadFromLocalStorage();
@@ -94,18 +81,10 @@ const Chalkboard: React.FC = () => {
         chalkboardState.saveToDatabase(
           false,
           (message) => {
-            setToastNotification({
-              message,
-              open: true,
-              severity: 'success',
-            });
+            showToastNotification(message, 'success');
           },
-          (message) => {
-            setToastNotification({
-              message,
-              open: true,
-              severity: 'error',
-            });
+          (error) => {
+            showToastNotification(error, 'error');
           }
         ),
       icon: <SaveIcon />,
@@ -116,18 +95,10 @@ const Chalkboard: React.FC = () => {
         chalkboardState.saveToDatabase(
           true,
           (message) => {
-            setToastNotification({
-              message,
-              open: true,
-              severity: 'success',
-            });
+            showToastNotification(message, 'success');
           },
-          (message) => {
-            setToastNotification({
-              message,
-              open: true,
-              severity: 'error',
-            });
+          (error) => {
+            showToastNotification(error, 'error');
           }
         ),
       icon: <SaveAsIcon />,
@@ -147,12 +118,8 @@ const Chalkboard: React.FC = () => {
   };
 
   const handleLoadCanvas = async (chalkboardId: string) => {
-    chalkboardState.loadFromDatabase(chalkboardId, null, (message) => {
-      setToastNotification({
-        message,
-        open: true,
-        severity: 'error',
-      });
+    chalkboardState.loadFromDatabase(chalkboardId, null, (error) => {
+      showToastNotification(error, 'error');
     });
   };
 
@@ -165,24 +132,8 @@ const Chalkboard: React.FC = () => {
         </div>
         <div className={styles.tools}>
           <CanvasToolbar items={toolbarItems} />
-          <ColorPicker
-          // color={activeComponentProps.color}
-          // setColor={(color) => {
-          //   setActiveComponentProps((activeComponentProps: any) => ({
-          //     ...activeComponentProps,
-          //     color,
-          //   }));
-          // }}
-          />
-          <TextSizePicker
-          // size={activeComponentProps.textSize}
-          // setSize={(size) =>
-          //   setActiveComponentProps((activeComponentProps: any) => ({
-          //     ...activeComponentProps,
-          //     textSize: size,
-          //   }))
-          // }
-          />
+          <ColorPicker />
+          <TextSizePicker />
         </div>
         <UserProfile
           onLoginAttempt={handleLogin}
@@ -196,10 +147,7 @@ const Chalkboard: React.FC = () => {
         onSelected={handleLoadCanvas}
       />
       <ComponentCanvas />
-      <ToastNotification
-        toastNotification={toastNotification}
-        setToastNotification={setToastNotification}
-      />
+      <ToastNotification />
     </div>
   );
 };

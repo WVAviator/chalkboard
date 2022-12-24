@@ -9,13 +9,13 @@ export interface ChalkboardDataStore {
   loadFromDatabase: (
     chalkboardId: string,
     onSuccess?: (message: string) => void,
-    onError?: (message: string) => void
+    onError?: (error: string) => void
   ) => void;
   loadFromLocalStorage: () => void;
   saveToDatabase: (
     saveAsNew: boolean,
     onSuccess?: (message: string) => void,
-    onError?: (message: string) => void
+    onError?: (error: string) => void
   ) => void;
   saveToLocalStorage: () => void;
   addComponent: (component: PaintableComponentData) => void;
@@ -43,7 +43,7 @@ export const useChalkboardDataStore = create<ChalkboardDataStore>(
     loadFromDatabase: async (
       chalkboardId: string,
       onSuccess: (message: string) => void,
-      onError: (message: string) => void
+      onError: (error: string) => void
     ) => {
       set({
         chalkboardComponents: [],
@@ -82,7 +82,7 @@ export const useChalkboardDataStore = create<ChalkboardDataStore>(
     saveToDatabase: async (
       saveAsNew: boolean,
       onSuccess: (message: string) => void,
-      onError: (message: string) => void
+      onError: (error: string) => void
     ) => {
       const { chalkboardComponents, chalkboardTitle, chalkboardId } = get();
 
