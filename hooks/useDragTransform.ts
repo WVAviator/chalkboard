@@ -1,5 +1,7 @@
+import { useActiveComponentStore } from './useActiveComponentStore';
+import { useChalkboardDataStore } from './useChalkboardDataStore';
 import React from 'react';
-import { ActiveComponentContext } from '../components/ActiveComponentProvider/ActiveComponentProvider';
+import { useCanvasRefStore } from './useCanvasRefStore';
 
 export interface Transform {
   x: number;
@@ -15,7 +17,7 @@ export interface Transform {
  */
 const useDragTransform = (
   initialTransform: Transform,
-  canvasRect: DOMRect,
+  // canvasRect: DOMRect,
   saveTransform: (transform: Transform) => void
 ) => {
   const [isDragging, setIsDragging] = React.useState<boolean>(false);
@@ -27,7 +29,11 @@ const useDragTransform = (
   });
   const [transform, setTransform] = React.useState(initialTransform);
 
-  const { setActiveComponent } = React.useContext(ActiveComponentContext);
+  const { resetActiveComponent } = useActiveComponentStore((state) => ({
+    resetActiveComponent: state.resetActiveComponent,
+  }));
+
+  const canvasRect = useCanvasRefStore((state) => state.canvasRect);
 
   const handlePointerDown = (event: React.PointerEvent) => {
     if (event.buttons !== 1) return;
@@ -61,7 +67,7 @@ const useDragTransform = (
   const handlePointerUp = (event: React.PointerEvent) => {
     if (isDragging) {
       setIsDragging(false);
-      setActiveComponent(null);
+      resetActiveComponent();
       saveTransform(transform);
     }
   };

@@ -1,32 +1,18 @@
-import {
-  Avatar,
-  Button,
-  CircularProgress,
-  IconButton,
-  Menu,
-  MenuItem,
-} from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import PersonIcon from '@mui/icons-material/Person';
+import { Avatar, Button, Menu, MenuItem } from '@mui/material';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import React, { MouseEvent } from 'react';
+import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 import styles from './UserProfile.module.css';
 
-interface UserProfileProps {
-  onLoginAttempt?: () => void;
-  onLogout?: () => void;
-  onMyChalkboards?: () => void;
-}
+interface UserProfileProps {}
 
-const UserProfile: React.FC<UserProfileProps> = ({
-  onLoginAttempt = () => {},
-  onLogout = () => {},
-  onMyChalkboards = () => {},
-}) => {
-  const { data: session, status } = useSession();
-  const loading = status === 'loading';
+const UserProfile: React.FC<UserProfileProps> = ({}) => {
+  const { data: session } = useSession();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const saveToLocalStorage = useChalkboardDataStore(
+    (state) => state.saveToLocalStorage
+  );
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -37,19 +23,14 @@ const UserProfile: React.FC<UserProfileProps> = ({
 
   const handleSignIn = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
-    onLoginAttempt();
+    saveToLocalStorage();
     signIn();
   };
 
   const handleSignOut = () => {
     setAnchorEl(null);
-    onLogout();
+    saveToLocalStorage();
     signOut();
-  };
-
-  const handleMyChalkboards = () => {
-    setAnchorEl(null);
-    onMyChalkboards();
   };
 
   return (
@@ -77,7 +58,6 @@ const UserProfile: React.FC<UserProfileProps> = ({
               'aria-labelledby': 'basic-button',
             }}
           >
-            {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
             <MenuItem onClick={handleClose}>My Profile</MenuItem>
             <MenuItem onClick={handleSignOut}>Logout</MenuItem>
           </Menu>

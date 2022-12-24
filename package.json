@@ -26,7 +26,8 @@
     "perfect-freehand": "^1.2.0",
     "react": "^18.2.0",
     "react-color": "^2.19.3",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "zustand": "^4.1.5"
   },
   "devDependencies": {
     "@types/node": "18.11.15",

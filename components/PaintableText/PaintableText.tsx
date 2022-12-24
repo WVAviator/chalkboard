@@ -1,4 +1,5 @@
 import React from 'react';
+import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
 import PaintableDiv from '../PaintableDiv/PaintableDiv';
 import { TextSize } from '../TextSizePicker/TextSizePicker';
@@ -10,13 +11,15 @@ interface PaintableTextProps extends PaintableComponentProps {
 
 const PaintableText: React.FC<PaintableTextProps> = ({
   createEvent,
-  data,
-  setData,
-  canvasRect,
   color = '#FFFFFF',
   textSize = 'medium',
+  id,
   ...rest
 }) => {
+  const { data, setData } = useChalkboardDataStore((state) => ({
+    data: state.getComponent(id).data,
+    setData: (data: any) => state.updateComponent(id, { data }),
+  }));
   const [editing, setEditing] = React.useState<boolean>(false);
   const [quickClick, setQuickClick] = React.useState<boolean>(false);
 
@@ -56,14 +59,13 @@ const PaintableText: React.FC<PaintableTextProps> = ({
   return (
     <PaintableDiv
       createEvent={createEvent}
-      data={data}
-      setData={setData}
-      canvasRect={canvasRect}
+      //   canvasRect={canvasRect}
       color={'transparent'}
       onCreated={handleCreated}
       minHeight={divHeight}
       minWidth={divWidth}
       shadow="dragonly"
+      id={id}
       {...rest}
     >
       <textarea

@@ -1,11 +1,13 @@
 import getStroke from 'perfect-freehand';
 import React from 'react';
 import useDragTransform from '../../hooks/useDragTransform';
-import { ActiveComponentContext } from '../ActiveComponentProvider/ActiveComponentProvider';
 import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
 import { getSvgPathFromStroke } from './utils';
 import styles from './PaintableSVG.module.css';
 import withRightClickMenu from '../../hocs/withRightClickMenu';
+import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
+import { useCanvasRefStore } from '../../hooks/useCanvasRefStore';
+import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
 
 const defaultOptions = {
   size: 5,
@@ -25,11 +27,14 @@ interface PaintableSVGProps extends PaintableComponentProps {}
 
 const PaintableSVG: React.FC<PaintableSVGProps> = ({
   createEvent,
-  data,
-  setData,
-  canvasRect,
   color = '#FFFFFF',
+  id,
 }) => {
+  const { data, setData } = useChalkboardDataStore((state) => ({
+    data: state.getComponent(id).data,
+    setData: (data: any) => state.updateComponent(id, { data }),
+  }));
+  const canvasRect = useCanvasRefStore((state) => state.canvasRect);
   const [points, setPoints] = React.useState<number[][]>(
     createEvent
       ? [
@@ -45,11 +50,12 @@ const PaintableSVG: React.FC<PaintableSVGProps> = ({
 
   const { transform, isDragging, dragEvents } = useDragTransform(
     createEvent ? { x: 0, y: 0 } : data.transform,
-    canvasRect,
     (transform) => setData({ ...data, transform })
   );
 
-  const { activeComponent } = React.useContext(ActiveComponentContext);
+  const { activeComponent } = useActiveComponentStore((state) => ({
+    activeComponent: state.activeComponent,
+    }));
 
   const handlePointerMove = (event: React.PointerEvent<SVGSVGElement>) => {
     dragEvents.handlePointerMove(event);

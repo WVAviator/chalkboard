@@ -3,14 +3,17 @@ import React, { useEffect } from 'react';
 import styles from './TitleDisplay.module.css';
 import EditIcon from '@mui/icons-material/Edit';
 import styled from '@emotion/styled';
+import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 
-interface TitleDisplayProps {
-  title: string;
-  setTitle: React.Dispatch<React.SetStateAction<string>>;
-}
+interface TitleDisplayProps {}
 
-const TitleDisplay: React.FC<TitleDisplayProps> = ({ title, setTitle }) => {
+const TitleDisplay: React.FC<TitleDisplayProps> = () => {
   const [editing, setEditing] = React.useState<boolean>(false);
+
+  const { title, setTitle } = useChalkboardDataStore((state) => ({
+    title: state.chalkboardTitle,
+    setTitle: state.updateTitle,
+  }));
 
   const inputRef = React.useRef<HTMLInputElement>(null);
 
