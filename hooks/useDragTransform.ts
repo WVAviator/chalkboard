@@ -1,6 +1,7 @@
 import { useChalkboardDataStore } from './useChalkboardDataStore';
 import React from 'react';
 import { ActiveComponentContext } from '../components/ActiveComponentProvider/ActiveComponentProvider';
+import { useCanvasRefStore } from './useCanvasRefStore';
 
 export interface Transform {
   x: number;
@@ -30,7 +31,7 @@ const useDragTransform = (
 
   const { setActiveComponent } = React.useContext(ActiveComponentContext);
 
-  const canvasRect = useChalkboardDataStore((state) => state.canvasRect);
+  const canvasRect = useCanvasRefStore((state) => state.canvasRect);
 
   const handlePointerDown = (event: React.PointerEvent) => {
     if (event.buttons !== 1) return;

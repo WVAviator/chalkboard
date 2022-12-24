@@ -1,7 +1,7 @@
 import create from 'zustand';
 import { PaintableComponentData } from '../components/ComponentCanvas/ComponentCanvas';
 
-interface ChalkboardDataStore {
+export interface ChalkboardDataStore {
   chalkboardComponents: PaintableComponentData[];
   chalkboardId: string | null;
   chalkboardTitle: string;
@@ -27,8 +27,6 @@ interface ChalkboardDataStore {
   moveComponent: (componentId: string, newIndex?: number) => void;
   updateTitle: (title: string) => void;
   getComponent: (componentId: string) => PaintableComponentData | undefined;
-  canvasRect: DOMRect | null;
-  setCanvasRect: (rect: DOMRect) => void;
 }
 
 export const useChalkboardDataStore = create<ChalkboardDataStore>(
@@ -197,7 +195,5 @@ export const useChalkboardDataStore = create<ChalkboardDataStore>(
       get().chalkboardComponents.find(
         (component) => component.id === componentId
       ),
-    canvasRect: null,
-    setCanvasRect: (rect: DOMRect) => set({ canvasRect: rect }),
   })
 );

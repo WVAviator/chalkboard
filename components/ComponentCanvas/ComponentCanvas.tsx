@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useCanvasRefStore } from '../../hooks/useCanvasRefStore';
 import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 import PaintableCodeEditor from '../PaintableCodeEditor/PaintableCodeEditor';
 import PaintableDiv from '../PaintableDiv/PaintableDiv';
@@ -85,8 +86,6 @@ interface ComponentCanvasProps {
 const ComponentCanvas: React.FC<ComponentCanvasProps> = ({
   activeComponent,
   activeComponentProps = {},
-  // setComponents,
-  // components,
   customPaintableComponents = {},
 }) => {
   const paintableComponentMap = {
@@ -104,13 +103,12 @@ const ComponentCanvas: React.FC<ComponentCanvasProps> = ({
 
   // console.log('components', components);
   const canvasRef = React.useRef<HTMLDivElement>(null);
-  const setCanvasRect = useChalkboardDataStore((state) => state.setCanvasRect);
+  const setCanvasRef = useCanvasRefStore((state) => state.setCanvasRef);
 
   useEffect(() => {
     if (!canvasRef.current) return;
-    const canvasRect = canvasRef.current.getBoundingClientRect();
-    setCanvasRect(canvasRect);
-  }, [canvasRef, setCanvasRect]);
+    setCanvasRef(canvasRef);
+  }, [canvasRef, setCanvasRef]);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!activeComponent) {
