@@ -1,9 +1,9 @@
 import React from 'react';
 import withRightClickMenu from '../../hocs/withRightClickMenu';
+import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
 import { useCanvasRefStore } from '../../hooks/useCanvasRefStore';
 import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 import useDragTransform, { Transform } from '../../hooks/useDragTransform';
-import { ActiveComponentContext } from '../ActiveComponentProvider/ActiveComponentProvider';
 import {
   PaintableComponentData,
   PaintableComponentProps,
@@ -58,8 +58,11 @@ const PaintableDiv: React.FC<PaintableDivProps> = ({
     (transform) => setData({ ...data, transform })
   );
 
-  const { activeComponent, setActiveComponent } = React.useContext(
-    ActiveComponentContext
+  const { activeComponent, resetActiveComponent } = useActiveComponentStore(
+    (state) => ({
+      activeComponent: state.activeComponent,
+      resetActiveComponent: state.resetActiveComponent,
+    })
   );
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -83,7 +86,7 @@ const PaintableDiv: React.FC<PaintableDivProps> = ({
 
     if (!isSizing) return;
     setIsSizing(false);
-    setActiveComponent(null);
+    resetActiveComponent();
     setData({
       ...data,
       position,

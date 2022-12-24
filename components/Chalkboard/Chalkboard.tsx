@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import ActiveComponentProvider from '../ActiveComponentProvider/ActiveComponentProvider';
 import ComponentCanvas from '../ComponentCanvas/ComponentCanvas';
 import styles from './Chalkboard.module.css';
 import FormatSizeIcon from '@mui/icons-material/FormatSize';
@@ -21,17 +20,21 @@ import ToastNotification, {
   ToastNotificationData,
 } from '../ToastNotification/ToastNotification';
 import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
+import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
 
 const Chalkboard: React.FC = () => {
   const chalkboardState = useChalkboardDataStore();
 
-  const [activeComponent, setActiveComponent] = React.useState<string | null>(
-    null
-  );
-  const [activeComponentProps, setActiveComponentProps] = React.useState<any>({
-    color: '#FFFFFF',
-    textSize: 'medium',
-  });
+  // const [activeComponent, setActiveComponent] = React.useState<string | null>(
+  //   null
+  // );
+  // const [activeComponentProps, setActiveComponentProps] = React.useState<any>({
+  //   color: '#FFFFFF',
+  //   textSize: 'medium',
+  // });
+
+  const activeComponentState = useActiveComponentStore();
+
   const [myChalkboardsModalOpen, setMyChalkboardsModalOpen] =
     React.useState<boolean>(false);
 
@@ -49,47 +52,23 @@ const Chalkboard: React.FC = () => {
   const toolbarItems = [
     {
       icon: <GestureIcon />,
-      selected: activeComponent === 'svg',
-      onClick: () => {
-        if (activeComponent === 'svg') {
-          setActiveComponent(null);
-        } else {
-          setActiveComponent('svg');
-        }
-      },
+      selected: activeComponentState.activeComponent === 'svg',
+      onClick: () => activeComponentState.toggleActiveComponent('svg'),
     },
     {
       icon: <Crop75Icon />,
-      selected: activeComponent === 'div',
-      onClick: () => {
-        if (activeComponent === 'div') {
-          setActiveComponent(null);
-        } else {
-          setActiveComponent('div');
-        }
-      },
+      selected: activeComponentState.activeComponent === 'div',
+      onClick: () => activeComponentState.toggleActiveComponent('div'),
     },
     {
       icon: <CodeIcon />,
-      selected: activeComponent === 'code',
-      onClick: () => {
-        if (activeComponent === 'code') {
-          setActiveComponent(null);
-        } else {
-          setActiveComponent('code');
-        }
-      },
+      selected: activeComponentState.activeComponent === 'code',
+      onClick: () => activeComponentState.toggleActiveComponent('code'),
     },
     {
       icon: <FormatSizeIcon />,
-      selected: activeComponent === 'text',
-      onClick: () => {
-        if (activeComponent === 'text') {
-          setActiveComponent(null);
-        } else {
-          setActiveComponent('text');
-        }
-      },
+      selected: activeComponentState.activeComponent === 'text',
+      onClick: () => activeComponentState.toggleActiveComponent('text'),
     },
   ];
 
@@ -98,11 +77,7 @@ const Chalkboard: React.FC = () => {
       label: 'New',
       onClick: () => {
         chalkboardState.resetChalkboard();
-        setActiveComponent(null);
-        setActiveComponentProps({
-          color: '#FFFFFF',
-          textSize: 'medium',
-        });
+        activeComponentState.resetActiveComponent();
       },
       icon: <NoteAddIcon />,
     },
@@ -186,30 +161,27 @@ const Chalkboard: React.FC = () => {
       <header className={styles.header}>
         <div className={styles.meta}>
           <FileMenu options={fileMenuOptions} />
-          <TitleDisplay
-            title={chalkboardState.chalkboardTitle}
-            setTitle={chalkboardState.updateTitle}
-          />
+          <TitleDisplay />
         </div>
         <div className={styles.tools}>
           <CanvasToolbar items={toolbarItems} />
           <ColorPicker
-            color={activeComponentProps.color}
-            setColor={(color) => {
-              setActiveComponentProps((activeComponentProps: any) => ({
-                ...activeComponentProps,
-                color,
-              }));
-            }}
+          // color={activeComponentProps.color}
+          // setColor={(color) => {
+          //   setActiveComponentProps((activeComponentProps: any) => ({
+          //     ...activeComponentProps,
+          //     color,
+          //   }));
+          // }}
           />
           <TextSizePicker
-            size={activeComponentProps.textSize}
-            setSize={(size) =>
-              setActiveComponentProps((activeComponentProps: any) => ({
-                ...activeComponentProps,
-                textSize: size,
-              }))
-            }
+          // size={activeComponentProps.textSize}
+          // setSize={(size) =>
+          //   setActiveComponentProps((activeComponentProps: any) => ({
+          //     ...activeComponentProps,
+          //     textSize: size,
+          //   }))
+          // }
           />
         </div>
         <UserProfile
@@ -223,12 +195,7 @@ const Chalkboard: React.FC = () => {
         setOpen={setMyChalkboardsModalOpen}
         onSelected={handleLoadCanvas}
       />
-      <ActiveComponentProvider value={{ activeComponent, setActiveComponent }}>
-        <ComponentCanvas
-          activeComponent={activeComponent}
-          activeComponentProps={activeComponentProps}
-        />
-      </ActiveComponentProvider>
+      <ComponentCanvas />
       <ToastNotification
         toastNotification={toastNotification}
         setToastNotification={setToastNotification}

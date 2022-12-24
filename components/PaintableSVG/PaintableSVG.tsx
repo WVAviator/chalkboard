@@ -1,13 +1,13 @@
 import getStroke from 'perfect-freehand';
 import React from 'react';
 import useDragTransform from '../../hooks/useDragTransform';
-import { ActiveComponentContext } from '../ActiveComponentProvider/ActiveComponentProvider';
 import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
 import { getSvgPathFromStroke } from './utils';
 import styles from './PaintableSVG.module.css';
 import withRightClickMenu from '../../hocs/withRightClickMenu';
 import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 import { useCanvasRefStore } from '../../hooks/useCanvasRefStore';
+import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
 
 const defaultOptions = {
   size: 5,
@@ -53,7 +53,9 @@ const PaintableSVG: React.FC<PaintableSVGProps> = ({
     (transform) => setData({ ...data, transform })
   );
 
-  const { activeComponent } = React.useContext(ActiveComponentContext);
+  const { activeComponent } = useActiveComponentStore((state) => ({
+    activeComponent: state.activeComponent,
+    }));
 
   const handlePointerMove = (event: React.PointerEvent<SVGSVGElement>) => {
     dragEvents.handlePointerMove(event);

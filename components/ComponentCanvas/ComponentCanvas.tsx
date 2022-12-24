@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
 import { useCanvasRefStore } from '../../hooks/useCanvasRefStore';
 import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 import PaintableCodeEditor from '../PaintableCodeEditor/PaintableCodeEditor';
@@ -69,29 +70,27 @@ const defaultPaintableComponentMap: PaintableComponentMap = {
 
 interface ComponentCanvasProps {
   /**
-   * The activeComponent is the type of the component that is currently being drawn on the canvas.
-   */
-  activeComponent: string | null;
-  /**
-   * The activeComponentProps are the additional props that are passed to the activeComponent when it is created.
-   */
-  activeComponentProps?: any;
-
-  /**
    * The customPaintableComponents are any custom components that can be drawn on the canvas.
    */
   customPaintableComponents?: PaintableComponentMap;
 }
 
 const ComponentCanvas: React.FC<ComponentCanvasProps> = ({
-  activeComponent,
-  activeComponentProps = {},
+  // activeComponent,
+  // activeComponentProps = {},
   customPaintableComponents = {},
 }) => {
   const paintableComponentMap = {
     ...defaultPaintableComponentMap,
     ...customPaintableComponents,
   };
+
+  const { activeComponent, activeComponentProps } = useActiveComponentStore(
+    (state) => ({
+      activeComponent: state.activeComponent,
+      activeComponentProps: state.activeComponentProps,
+    })
+  );
 
   const { components, addComponent, updateComponent } = useChalkboardDataStore(
     (state) => ({
