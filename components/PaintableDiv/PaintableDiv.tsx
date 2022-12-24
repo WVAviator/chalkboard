@@ -1,5 +1,6 @@
 import React from 'react';
 import withRightClickMenu from '../../hocs/withRightClickMenu';
+import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 import useDragTransform, { Transform } from '../../hooks/useDragTransform';
 import { ActiveComponentContext } from '../ActiveComponentProvider/ActiveComponentProvider';
 import {
@@ -25,14 +26,18 @@ const PaintableDiv: React.FC<PaintableDivProps> = ({
   color = '#FFFFFF',
   children = null,
   createEvent,
-  data,
-  setData,
-  canvasRect,
   minWidth = 0,
   minHeight = 0,
   onCreated,
   shadow = 'default',
+  id,
 }) => {
+  const { data, setData, canvasRect } = useChalkboardDataStore((state) => ({
+    data: state.getComponent(id).data,
+    setData: (data: any) => state.updateComponent(id, { data }),
+    canvasRect: state.canvasRect,
+  }));
+
   const [position, setPosition] = React.useState(
     createEvent
       ? [
@@ -48,7 +53,7 @@ const PaintableDiv: React.FC<PaintableDivProps> = ({
 
   const { transform, isDragging, dragEvents } = useDragTransform(
     createEvent ? { x: 0, y: 0 } : data.transform,
-    canvasRect,
+    // canvasRect,
     (transform) => setData({ ...data, transform })
   );
 

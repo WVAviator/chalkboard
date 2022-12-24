@@ -6,6 +6,7 @@ import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
 import { getSvgPathFromStroke } from './utils';
 import styles from './PaintableSVG.module.css';
 import withRightClickMenu from '../../hocs/withRightClickMenu';
+import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 
 const defaultOptions = {
   size: 5,
@@ -25,11 +26,14 @@ interface PaintableSVGProps extends PaintableComponentProps {}
 
 const PaintableSVG: React.FC<PaintableSVGProps> = ({
   createEvent,
-  data,
-  setData,
-  canvasRect,
   color = '#FFFFFF',
+  id,
 }) => {
+  const { data, setData, canvasRect } = useChalkboardDataStore((state) => ({
+    data: state.getComponent(id).data,
+    setData: (data: any) => state.updateComponent(id, { data }),
+    canvasRect: state.canvasRect,
+  }));
   const [points, setPoints] = React.useState<number[][]>(
     createEvent
       ? [
@@ -45,7 +49,6 @@ const PaintableSVG: React.FC<PaintableSVGProps> = ({
 
   const { transform, isDragging, dragEvents } = useDragTransform(
     createEvent ? { x: 0, y: 0 } : data.transform,
-    canvasRect,
     (transform) => setData({ ...data, transform })
   );
 

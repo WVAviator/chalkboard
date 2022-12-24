@@ -4,6 +4,7 @@ import {
   PaintableComponentData,
   PaintableComponentProps,
 } from '../components/ComponentCanvas/ComponentCanvas';
+import { useChalkboardDataStore } from '../hooks/useChalkboardDataStore';
 
 export interface ContextMenuItem {
   label: string;
@@ -15,11 +16,15 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
   additionalMenuItems?: ContextMenuItem[]
 ) => {
   return (props: P) => {
-    // const [anchorEl, setAnchorEl] = React.useState(null);
     const [anchorPosition, setAnchorPosition] =
       React.useState<PopoverPosition | null>(null);
 
-    // const wrappedComponentRef = React.useRef<React.ComponentType<P>>(null);
+    const { moveComponent, removeComponent } = useChalkboardDataStore(
+      (state) => ({
+        moveComponent: state.moveComponent,
+        removeComponent: state.removeComponent,
+      })
+    );
 
     const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
       event.preventDefault();
@@ -34,37 +39,17 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
     const handleDelete = () => {
       setAnchorPosition(null);
 
-      props.setComponents((components: PaintableComponentData[]) => {
-        return components.filter((component) => component.id !== props.id);
-      });
+      removeComponent(props.id);
     };
 
     const handleBringToFront = () => {
       setAnchorPosition(null);
-
-      props.setComponents((components: PaintableComponentData[]) => {
-        const newComponents = [...components];
-        const componentIndex = newComponents.findIndex(
-          (component) => component.id === props.id
-        );
-        const component = newComponents.splice(componentIndex, 1)[0];
-        newComponents.push(component);
-        return newComponents;
-      });
+      moveComponent(props.id);
     };
 
     const handleSendToBack = () => {
       setAnchorPosition(null);
-
-      props.setComponents((components: PaintableComponentData[]) => {
-        const newComponents = [...components];
-        const componentIndex = newComponents.findIndex(
-          (component) => component.id === props.id
-        );
-        const component = newComponents.splice(componentIndex, 1)[0];
-        newComponents.unshift(component);
-        return newComponents;
-      });
+      moveComponent(props.id, 0);
     };
 
     return (
@@ -75,7 +60,6 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
           anchorPosition={anchorPosition}
           open={Boolean(anchorPosition)}
           onClose={handleClose}
-          //   ref={wrappedComponentRef}
         >
           <MenuItem onClick={handleDelete}>Delete</MenuItem>
           <MenuItem onClick={handleBringToFront}>Bring to Front</MenuItem>

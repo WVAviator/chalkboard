@@ -1,3 +1,4 @@
+import { useChalkboardDataStore } from './useChalkboardDataStore';
 import React from 'react';
 import { ActiveComponentContext } from '../components/ActiveComponentProvider/ActiveComponentProvider';
 
@@ -15,7 +16,7 @@ export interface Transform {
  */
 const useDragTransform = (
   initialTransform: Transform,
-  canvasRect: DOMRect,
+  // canvasRect: DOMRect,
   saveTransform: (transform: Transform) => void
 ) => {
   const [isDragging, setIsDragging] = React.useState<boolean>(false);
@@ -28,6 +29,8 @@ const useDragTransform = (
   const [transform, setTransform] = React.useState(initialTransform);
 
   const { setActiveComponent } = React.useContext(ActiveComponentContext);
+
+  const canvasRect = useChalkboardDataStore((state) => state.canvasRect);
 
   const handlePointerDown = (event: React.PointerEvent) => {
     if (event.buttons !== 1) return;
