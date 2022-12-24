@@ -20,13 +20,14 @@ import ToastNotification from '../ToastNotification/ToastNotification';
 import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
 import { useToastNotificationStore } from '../../hooks/useToastNotificationStore';
+import { useModalStore } from '../../hooks/useModalStore';
 
 const Chalkboard: React.FC = () => {
   const chalkboardState = useChalkboardDataStore();
   const activeComponentState = useActiveComponentStore();
-
-  const [myChalkboardsModalOpen, setMyChalkboardsModalOpen] =
-    React.useState<boolean>(false);
+  const { openMyChalkboardsModal } = useModalStore((state) => ({
+    openMyChalkboardsModal: state.openMyChalkboardsModal,
+  }));
 
   const showToastNotification = useToastNotificationStore(
     (state) => state.showToastNotification
@@ -70,9 +71,7 @@ const Chalkboard: React.FC = () => {
     },
     {
       label: 'Open',
-      onClick: () => {
-        setMyChalkboardsModalOpen(true);
-      },
+      onClick: openMyChalkboardsModal,
       icon: <FileOpenIcon />,
     },
     {
@@ -105,18 +104,6 @@ const Chalkboard: React.FC = () => {
     },
   ];
 
-  const handleLogin = () => {
-    chalkboardState.saveToLocalStorage();
-  };
-
-  const handleLogout = () => {
-    chalkboardState.saveToLocalStorage();
-  };
-
-  const handleMyChalkboards = () => {
-    setMyChalkboardsModalOpen(true);
-  };
-
   const handleLoadCanvas = async (chalkboardId: string) => {
     chalkboardState.loadFromDatabase(chalkboardId, null, (error) => {
       showToastNotification(error, 'error');
@@ -135,17 +122,9 @@ const Chalkboard: React.FC = () => {
           <ColorPicker />
           <TextSizePicker />
         </div>
-        <UserProfile
-          onLoginAttempt={handleLogin}
-          onLogout={handleLogout}
-          onMyChalkboards={handleMyChalkboards}
-        />
+        <UserProfile />
       </header>
-      <MyChalkboards
-        open={myChalkboardsModalOpen}
-        setOpen={setMyChalkboardsModalOpen}
-        onSelected={handleLoadCanvas}
-      />
+      <MyChalkboards onSelected={handleLoadCanvas} />
       <ComponentCanvas />
       <ToastNotification />
     </div>

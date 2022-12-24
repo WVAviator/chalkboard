@@ -14,6 +14,7 @@ import NoteAltIcon from '@mui/icons-material/NoteAlt';
 import DeleteIcon from '@mui/icons-material/Delete';
 import React, { MouseEvent } from 'react';
 import styles from './MyChalkboards.module.css';
+import { useModalStore } from '../../hooks/useModalStore';
 
 interface ChalkboardFile {
   id: string;
@@ -22,17 +23,15 @@ interface ChalkboardFile {
 }
 
 interface MyChalkboardsProps {
-  open: boolean;
-  setOpen: (open: boolean) => void;
   onSelected: (id: string) => void;
 }
 
-const MyChalkboards: React.FC<MyChalkboardsProps> = ({
-  open,
-  setOpen,
-  onSelected,
-}) => {
+const MyChalkboards: React.FC<MyChalkboardsProps> = ({ onSelected }) => {
   const [chalkboards, setChalkboards] = React.useState<ChalkboardFile[]>([]);
+  const { open, close } = useModalStore((state) => ({
+    open: state.myChalkboardsModalOpen,
+    close: state.closeMyChalkboardsModal,
+  }));
 
   React.useEffect(() => {
     const getChalkboards = async () => {
@@ -59,7 +58,7 @@ const MyChalkboards: React.FC<MyChalkboardsProps> = ({
   };
 
   return (
-    <Dialog open={open} scroll="paper" onClose={() => setOpen(false)}>
+    <Dialog open={open} scroll="paper" onClose={close}>
       <DialogTitle>My Chalkboards</DialogTitle>
       <DialogContent dividers>
         <List>
@@ -70,7 +69,7 @@ const MyChalkboards: React.FC<MyChalkboardsProps> = ({
                   key={chalkboard.id}
                   className={styles.listItem}
                   onClick={() => {
-                    setOpen(false);
+                    close();
                     onSelected(chalkboard.id);
                   }}
                 >
