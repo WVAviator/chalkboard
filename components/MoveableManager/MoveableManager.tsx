@@ -43,20 +43,20 @@ const MoveableManager = () => {
 
   return (
     <Moveable
-      targets={selectedElements}
+      target={selectedElements[0]}
       origin={false}
       draggable={true}
       onDrag={({ target, transform }) => {
         updateComponentData(target.id, { transform });
       }}
-      scalable={true}
+      scalable={selectedElements[0].id.startsWith('svg')}
       onScale={({ target, transform }) => {
         if (!target.id.startsWith('svg')) {
           return;
         }
         updateComponentData(target.id, { transform });
       }}
-      resizable={true}
+      resizable={!selectedElements[0].id.startsWith('svg')}
       onResize={({ target, width, height }) => {
         if (target.id.startsWith('svg')) {
           return;
