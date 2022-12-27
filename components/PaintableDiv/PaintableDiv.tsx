@@ -21,12 +21,10 @@ interface PaintableDivProps extends PaintableComponentProps {
   minHeight?: number;
   onCreated?: () => void;
   shadow?: 'none' | 'default' | 'dragonly';
+  children: React.ReactNode;
 }
 
-const PaintableDiv = React.forwardRef<
-  HTMLDivElement,
-  PropsWithChildren<PaintableDivProps>
->(
+const PaintableDiv = React.forwardRef<HTMLDivElement, PaintableDivProps>(
   (
     {
       color = '#FFFFFF',
@@ -151,4 +149,6 @@ const PaintableDiv = React.forwardRef<
   }
 );
 
-export default withRightClickMenu(withSelectable(PaintableDiv));
+export default withRightClickMenu<PaintableDivProps>(
+  withSelectable<PaintableDivProps>(PaintableDiv)
+);

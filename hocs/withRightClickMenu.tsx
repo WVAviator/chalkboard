@@ -1,6 +1,7 @@
 import React from 'react';
 import { Menu, MenuItem, PopoverPosition } from '@mui/material';
 import {
+  PaintableComponent,
   PaintableComponentData,
   PaintableComponentProps,
 } from '../components/ComponentCanvas/ComponentCanvas';
@@ -13,7 +14,7 @@ export interface ContextMenuItem {
 }
 
 const withRightClickMenu = <P extends PaintableComponentProps>(
-  WrappedComponent: React.ComponentType<P>,
+  WrappedComponent: PaintableComponent,
   additionalMenuItems?: ContextMenuItem[]
 ) => {
   return (props: P) => {

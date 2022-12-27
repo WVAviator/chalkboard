@@ -5,9 +5,11 @@ import {
 } from '../components/ComponentCanvas/ComponentCanvas';
 import { useSelectionStore } from '../hooks/useSelectionStore';
 
-const withSelectable = (WrappedComponent: PaintableComponent) => {
+const withSelectable = <P extends PaintableComponentProps>(
+  WrappedComponent: PaintableComponent
+) => {
   return (
-    props: PaintableComponentProps & { ref: React.RefObject<HTMLElement> }
+    props: P & { ref: React.RefObject<HTMLElement> }
   ) => {
     const { addSelectableElement, removeSelectableElement } = useSelectionStore(
       (state) => ({
