@@ -5,6 +5,7 @@ import {
   PaintableComponentProps,
 } from '../components/ComponentCanvas/ComponentCanvas';
 import { useChalkboardDataStore } from '../hooks/useChalkboardDataStore';
+import { useSelectionStore } from '../hooks/useSelectionStore';
 
 export interface ContextMenuItem {
   label: string;
@@ -26,6 +27,12 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
       })
     );
 
+    const wrappedComponentRef = React.useRef<HTMLElement>(null);
+
+    const removeSelectedElementById = useSelectionStore(
+      (state) => state.removeSelectedElementById
+    );
+
     const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
       event.preventDefault();
 
@@ -38,7 +45,7 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
 
     const handleDelete = () => {
       setAnchorPosition(null);
-
+      removeSelectedElementById(props.id);
       removeComponent(props.id);
     };
 
