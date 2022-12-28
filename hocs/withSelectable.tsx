@@ -8,9 +8,7 @@ import { useSelectionStore } from '../hooks/useSelectionStore';
 const withSelectable = <P extends PaintableComponentProps>(
   WrappedComponent: PaintableComponent
 ) => {
-  return (
-    props: P & { ref: React.RefObject<HTMLElement> }
-  ) => {
+  return (props: P & { ref: React.RefObject<HTMLElement> }) => {
     const { addSelectableElement, removeSelectableElement } = useSelectionStore(
       (state) => ({
         addSelectableElement: state.addSelectableElement,
@@ -18,17 +16,15 @@ const withSelectable = <P extends PaintableComponentProps>(
       })
     );
 
-    const ref = React.createRef<HTMLElement>();
+    const wrappedComponentRef = React.createRef<HTMLElement>();
     React.useEffect(() => {
-      // if (!ref.current) return;
-      addSelectableElement(ref.current);
+      addSelectableElement(wrappedComponentRef.current);
       return () => {
-        // if (!ref.current) return;
-        removeSelectableElement(ref.current);
+        removeSelectableElement(wrappedComponentRef.current);
       };
     }, []);
 
-    return <WrappedComponent ref={ref} {...props} />;
+    return <WrappedComponent ref={wrappedComponentRef} {...props} />;
   };
 };
 

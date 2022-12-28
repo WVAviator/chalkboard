@@ -1,10 +1,9 @@
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import withRightClickMenu from '../../hocs/withRightClickMenu';
 import withSelectable from '../../hocs/withSelectable';
 import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
 import { useCanvasRefStore } from '../../hooks/useCanvasRefStore';
 import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
-import useDragTransform, { Transform } from '../../hooks/useDragTransform';
 import {
   PaintableComponentData,
   PaintableComponentProps,
@@ -13,8 +12,6 @@ import styles from './PaintableDiv.module.css';
 
 export interface PaintableDivData extends PaintableComponentData {
   position: number[][];
-  size: number[][];
-  transform: Transform;
 }
 interface PaintableDivProps extends PaintableComponentProps {
   minWidth?: number;
@@ -52,16 +49,8 @@ const PaintableDiv = React.forwardRef<HTMLDivElement, PaintableDivProps>(
           ]
         : data.position
     );
-    // const [size, setSize] = React.useState(
-    //   createEvent ? [minWidth, minHeight] : data.size
-    // );
-    const [isSizing, setIsSizing] = React.useState(!!createEvent);
 
-    // const { transform, isDragging, dragEvents } = useDragTransform(
-    //   createEvent ? { x: 0, y: 0 } : data.transform,
-    //   // canvasRect,
-    //   (transform) => setData({ ...data, transform })
-    // );
+    const [isSizing, setIsSizing] = React.useState(!!createEvent);
 
     const { activeComponent, resetActiveComponent } = useActiveComponentStore(
       (state) => ({
@@ -71,26 +60,18 @@ const PaintableDiv = React.forwardRef<HTMLDivElement, PaintableDivProps>(
     );
 
     const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-      // dragEvents.handlePointerMove(event);
-
       if (!isSizing) return;
       if (event.buttons !== 1) return;
       const [x, y] = [
         event.clientX - canvasRect.left,
         event.clientY - canvasRect.top,
       ];
-      // const size = [
-      //   Math.max(x - position[0], minWidth),
-      //   Math.max(y - position[1], minHeight),
-      // ];
       const width = Math.max(x - position[0], minWidth);
       const height = Math.max(y - position[1], minHeight);
       setData({ ...data, width, height });
     };
 
     const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
-      // dragEvents.handlePointerUp(event);
-
       if (!isSizing) return;
       setIsSizing(false);
       resetActiveComponent();
@@ -124,19 +105,12 @@ const PaintableDiv = React.forwardRef<HTMLDivElement, PaintableDivProps>(
           id={id}
           className={styles.inner}
           ref={forwardedRef}
-          // onPointerDown={(event) => {
-          //   if (activeComponent || isSizing) return;
-          //   dragEvents.handlePointerDown(event);
-          // }}
           style={{
             left: `${position[0]}px`,
             top: `${position[1]}px`,
             width: `${data.width}px`,
             height: `${data.height}px`,
             pointerEvents: activeComponent ? 'none' : 'all',
-            // transform: `translateX(${data.transform?.x ?? 0}px) translateY(${
-            //   data.transform?.y ?? 0
-            // }px)`,
             transform: data.transform,
             backgroundColor: color,
             boxShadow: boxShadow[shadow],

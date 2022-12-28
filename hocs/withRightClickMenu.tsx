@@ -62,7 +62,7 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
 
     return (
       <div id="wrapper" onContextMenu={handleRightClick}>
-        <WrappedComponent {...props} />
+        <WrappedComponent ref={wrappedComponentRef} {...props} />
         <Menu
           anchorReference="anchorPosition"
           anchorPosition={anchorPosition}

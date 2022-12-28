@@ -40,7 +40,7 @@ const MyChalkboards: React.FC<MyChalkboardsProps> = ({ onSelected }) => {
     setLoading(true);
     const getChalkboards = async () => {
       const response = await fetch('/api/canvas');
-      const { success, data } = await response.json();
+      const { data } = await response.json();
       setChalkboards(data || []);
       setLoading(false);
     };

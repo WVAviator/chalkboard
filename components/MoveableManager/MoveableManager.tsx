@@ -1,7 +1,5 @@
 import React from 'react';
 import Moveable from 'react-moveable';
-import MoveableGroup from 'react-moveable/declaration/MoveableGroup';
-import MoveableIndividualGroup from 'react-moveable/declaration/MoveableIndividualGroup';
 import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 import { useSelectionStore } from '../../hooks/useSelectionStore';
 
@@ -39,7 +37,6 @@ const MoveableManager = () => {
   );
 
   if (!selectedElements.length) return null;
-  //   console.log('selectedElements: ', selectedElements);
 
   return (
     <Moveable

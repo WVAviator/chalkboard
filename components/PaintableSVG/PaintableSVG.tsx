@@ -1,6 +1,5 @@
 import getStroke from 'perfect-freehand';
 import React, { useEffect, useImperativeHandle } from 'react';
-import useDragTransform from '../../hooks/useDragTransform';
 import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
 import { getSvgPathFromStroke } from './utils';
 import styles from './PaintableSVG.module.css';
@@ -59,18 +58,11 @@ const PaintableSVG = React.forwardRef<SVGPathElement, PaintableSVGProps>(
       }px`;
     }, [points]);
 
-    // const { transform, isDragging, dragEvents } = useDragTransform(
-    //   createEvent ? { x: 0, y: 0 } : data.transform,
-    //   (transform) => setData({ ...data, transform })
-    // );
-
     const { activeComponent } = useActiveComponentStore((state) => ({
       activeComponent: state.activeComponent,
     }));
 
     const handlePointerMove = (event: React.PointerEvent<SVGSVGElement>) => {
-      // dragEvents.handlePointerMove(event);
-
       if (!isDrawing) return;
       if (event.buttons !== 1) return;
 
@@ -85,8 +77,6 @@ const PaintableSVG = React.forwardRef<SVGPathElement, PaintableSVGProps>(
     };
 
     const handlePointerUp = (event: React.PointerEvent<SVGSVGElement>) => {
-      // dragEvents.handlePointerUp(event);
-
       if (!isDrawing) return;
       setIsDrawing(false);
       setData({ points });
@@ -111,9 +101,6 @@ const PaintableSVG = React.forwardRef<SVGPathElement, PaintableSVGProps>(
             ref={pathRef}
             style={{
               pointerEvents: activeComponent ? 'none' : 'all',
-              // transform: `translateX(${data.transform?.x ?? 0}px) translateY(${
-              //   data.transform?.y ?? 0
-              // }px)`,
               transform: data.transform,
             }}
             d={pathData}

@@ -3,17 +3,10 @@ import React from 'react';
 import { useToastNotificationStore } from '../../hooks/useToastNotificationStore';
 
 interface ToastNotificationProps {
-  // toastNotification: ToastNotificationData;
-  // setToastNotification: React.Dispatch<
-  //   React.SetStateAction<ToastNotificationData>
-  // >;
+
 }
 
 const ToastNotification: React.FC<ToastNotificationProps> = (
-  {
-    // toastNotification,
-    // setToastNotification,
-  }
 ) => {
   const { toastNotification, hideToastNotification } =
     useToastNotificationStore((state) => ({
@@ -22,17 +15,13 @@ const ToastNotification: React.FC<ToastNotificationProps> = (
     }));
 
   const handleToastClose = (
-    event?: React.SyntheticEvent | Event,
+    _event: React.SyntheticEvent | Event,
     reason?: string
   ) => {
     if (reason === 'clickaway') {
       return;
     }
     hideToastNotification();
-    // setToastNotification((toastNotification) => ({
-    //   ...toastNotification,
-    //   open: false,
-    // }));
   };
 
   return (

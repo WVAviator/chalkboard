@@ -24,7 +24,7 @@ export const useToastNotificationStore = create<ToastNotificationStore>(
       message: string,
       severity: AlertColor = 'success'
     ) =>
-      set((state) => ({
+      set(() => ({
         toastNotification: {
           open: true,
           severity,
