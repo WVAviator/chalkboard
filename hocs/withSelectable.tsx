@@ -18,9 +18,10 @@ const withSelectable = <P extends PaintableComponentProps>(
 
     const wrappedComponentRef = React.createRef<HTMLElement>();
     React.useEffect(() => {
+      const componentId = wrappedComponentRef.current?.id;
       addSelectableElement(wrappedComponentRef.current);
       return () => {
-        removeSelectableElement(wrappedComponentRef.current);
+        removeSelectableElement(componentId);
       };
     }, []);
 

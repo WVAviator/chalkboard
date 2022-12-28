@@ -26,9 +26,11 @@ const SelectionManager = () => {
     <Selecto
       container={canvasRef.current}
       selectableTargets={selectableElements}
+      toggleContinueSelect={['shift']}
       selectFromInside={false}
       onSelect={(e) => {
         e.added.forEach((el) => {
+          console.log(el);
           addSelectedElement(el);
         });
         e.removed.forEach((el) => {
