@@ -1,14 +1,7 @@
-import { stringify } from 'querystring';
 import React, { useEffect } from 'react';
-import CanvasModel from '../../models/Canvas';
-import ActiveComponentProvider from '../ActiveComponentProvider/ActiveComponentProvider';
-import ComponentCanvas, {
-  PaintableComponentData,
-  PaintableComponentProps,
-} from '../ComponentCanvas/ComponentCanvas';
+import ComponentCanvas from '../ComponentCanvas/ComponentCanvas';
 import styles from './Chalkboard.module.css';
 import FormatSizeIcon from '@mui/icons-material/FormatSize';
-import CloseIcon from '@mui/icons-material/Close';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import Crop75Icon from '@mui/icons-material/Crop75';
@@ -23,94 +16,49 @@ import FileMenu from '../FileMenu/FileMenu';
 import TitleDisplay from '../TitleDisplay/TitleDisplay';
 import ColorPicker from '../ColorPicker/ColorPicker';
 import TextSizePicker from '../TextSizePicker/TextSizePicker';
-import { Alert, IconButton, Snackbar } from '@mui/material';
-import ToastNotification, {
-  ToastNotificationData,
-} from '../ToastNotification/ToastNotification';
+import ToastNotification from '../ToastNotification/ToastNotification';
+import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
+import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
+import { useToastNotificationStore } from '../../hooks/useToastNotificationStore';
+import { useModalStore } from '../../hooks/useModalStore';
+import SelectionManager from '../SelectionManager/SelectionManager';
+import MoveableManager from '../MoveableManager/MoveableManager';
 
 const Chalkboard: React.FC = () => {
-  const [chalkboardData, setChalkboardData] = React.useState<
-    PaintableComponentData[]
-  >([]);
-  const [activeComponent, setActiveComponent] = React.useState<string | null>(
-    null
-  );
-  const [activeComponentProps, setActiveComponentProps] = React.useState<any>({
-    color: '#FFFFFF',
-    textSize: 'medium',
-  });
-  const [myChalkboardsModalOpen, setMyChalkboardsModalOpen] =
-    React.useState<boolean>(false);
+  const chalkboardState = useChalkboardDataStore();
+  const activeComponentState = useActiveComponentStore();
+  const { openMyChalkboardsModal } = useModalStore((state) => ({
+    openMyChalkboardsModal: state.openMyChalkboardsModal,
+  }));
 
-  const [canvasId, setCanvasId] = React.useState<string | null>(null);
-  const [canvasTitle, setCanvasTitle] = React.useState<string>('Untitled');
-  const [toastNotification, setToastNotification] =
-    React.useState<ToastNotificationData>({
-      message: '',
-      open: false,
-      severity: 'success',
-    });
+  const showToastNotification = useToastNotificationStore(
+    (state) => state.showToastNotification
+  );
 
   useEffect(() => {
-    const restoreCanvas = () => {
-      const restoredData = localStorage.getItem('chalkboardData');
-      if (restoredData) {
-        const { components, title, canvasId } = JSON.parse(restoredData);
-
-        setChalkboardData(components);
-        setCanvasTitle(title);
-        setCanvasId(canvasId);
-
-        localStorage.removeItem('chalkboardData');
-      }
-    };
-    restoreCanvas();
+    chalkboardState.loadFromLocalStorage();
   }, []);
 
   const toolbarItems = [
     {
       icon: <GestureIcon />,
-      selected: activeComponent === 'svg',
-      onClick: () => {
-        if (activeComponent === 'svg') {
-          setActiveComponent(null);
-        } else {
-          setActiveComponent('svg');
-        }
-      },
+      selected: activeComponentState.activeComponent === 'svg',
+      onClick: () => activeComponentState.toggleActiveComponent('svg'),
     },
     {
       icon: <Crop75Icon />,
-      selected: activeComponent === 'div',
-      onClick: () => {
-        if (activeComponent === 'div') {
-          setActiveComponent(null);
-        } else {
-          setActiveComponent('div');
-        }
-      },
+      selected: activeComponentState.activeComponent === 'div',
+      onClick: () => activeComponentState.toggleActiveComponent('div'),
     },
     {
       icon: <CodeIcon />,
-      selected: activeComponent === 'code',
-      onClick: () => {
-        if (activeComponent === 'code') {
-          setActiveComponent(null);
-        } else {
-          setActiveComponent('code');
-        }
-      },
+      selected: activeComponentState.activeComponent === 'code',
+      onClick: () => activeComponentState.toggleActiveComponent('code'),
     },
     {
       icon: <FormatSizeIcon />,
-      selected: activeComponent === 'text',
-      onClick: () => {
-        if (activeComponent === 'text') {
-          setActiveComponent(null);
-        } else {
-          setActiveComponent('text');
-        }
-      },
+      selected: activeComponentState.activeComponent === 'text',
+      onClick: () => activeComponentState.toggleActiveComponent('text'),
     },
   ];
 
@@ -118,135 +66,50 @@ const Chalkboard: React.FC = () => {
     {
       label: 'New',
       onClick: () => {
-        setChalkboardData([]);
-        setCanvasId(null);
-        setActiveComponent(null);
-        setActiveComponentProps({
-          color: '#FFFFFF',
-          textSize: 'medium',
-        });
-        setCanvasTitle('Untitled');
+        chalkboardState.resetChalkboard();
+        activeComponentState.resetActiveComponent();
       },
       icon: <NoteAddIcon />,
     },
     {
       label: 'Open',
-      onClick: () => {
-        setMyChalkboardsModalOpen(true);
-      },
+      onClick: openMyChalkboardsModal,
       icon: <FileOpenIcon />,
     },
     {
       label: 'Save',
-      onClick: async () => {
-        const body = {
-          components: chalkboardData,
-          title: canvasTitle,
-          canvasId,
-        };
-        const fetchUrl = canvasId ? `/api/canvas/${canvasId}` : '/api/canvas';
-        const response = await fetch(fetchUrl, {
-          method: canvasId ? 'PATCH' : 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+      onClick: () =>
+        chalkboardState.saveToDatabase(
+          false,
+          (message) => {
+            showToastNotification(message, 'success');
           },
-          body: JSON.stringify(body),
-        });
-        const { data, success } = await response.json();
-        if (success) {
-          console.log('Canvas saved');
-          setCanvasId(data._id);
-          setToastNotification({
-            message: 'Saved successfully!',
-            open: true,
-            severity: 'success',
-          });
-        } else {
-          console.log('Error saving canvas');
-          setToastNotification({
-            message: 'Error occurred while saving.',
-            open: true,
-            severity: 'error',
-          });
-        }
-      },
+          (error) => {
+            showToastNotification(error, 'error');
+          }
+        ),
       icon: <SaveIcon />,
     },
     {
       label: 'Save As',
-      onClick: async () => {
-        const body = {
-          components: chalkboardData,
-          title: canvasTitle,
-        };
-        const response = await fetch('/api/canvas', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+      onClick: () =>
+        chalkboardState.saveToDatabase(
+          true,
+          (message) => {
+            showToastNotification(message, 'success');
           },
-          body: JSON.stringify(body),
-        });
-        const data = await response.json();
-        if (data.success) {
-          console.log('Canvas saved');
-          setToastNotification({
-            message: 'Saved successfully!',
-            open: true,
-            severity: 'success',
-          });
-        } else {
-          console.log('Error saving canvas');
-          setToastNotification({
-            message: 'Error occurred while saving.',
-            open: true,
-            severity: 'error',
-          });
-        }
-      },
+          (error) => {
+            showToastNotification(error, 'error');
+          }
+        ),
       icon: <SaveAsIcon />,
     },
   ];
 
-  const localSave = () => {
-    const data = {
-      components: chalkboardData,
-      title: canvasTitle,
-      canvasId,
-    };
-    localStorage.setItem('chalkboardData', JSON.stringify(data));
-  };
-
-  const handleLogin = () => {
-    localSave();
-  };
-
-  const handleLogout = () => {
-    localSave();
-  };
-
-  const handleMyChalkboards = () => {
-    setMyChalkboardsModalOpen(true);
-  };
-
-  const handleLoadCanvas = async (canvasId: string) => {
-    setChalkboardData([]);
-    setCanvasId(null);
-    setCanvasTitle('Untitled');
-
-    const response = await fetch(`/api/canvas/${canvasId}`);
-    const { data, success } = await response.json();
-    if (success) {
-      setChalkboardData(data.components);
-      setCanvasTitle(data.title);
-      setCanvasId(data._id);
-    } else {
-      console.log('Error loading canvas');
-      setToastNotification({
-        message: 'Error occurred while loading.',
-        open: true,
-        severity: 'error',
-      });
-    }
+  const handleLoadCanvas = async (chalkboardId: string) => {
+    chalkboardState.loadFromDatabase(chalkboardId, null, (error) => {
+      showToastNotification(error, 'error');
+    });
   };
 
   return (
@@ -254,52 +117,20 @@ const Chalkboard: React.FC = () => {
       <header className={styles.header}>
         <div className={styles.meta}>
           <FileMenu options={fileMenuOptions} />
-          <TitleDisplay title={canvasTitle} setTitle={setCanvasTitle} />
+          <TitleDisplay />
         </div>
         <div className={styles.tools}>
           <CanvasToolbar items={toolbarItems} />
-          <ColorPicker
-            color={activeComponentProps.color}
-            setColor={(color) => {
-              setActiveComponentProps((activeComponentProps: any) => ({
-                ...activeComponentProps,
-                color,
-              }));
-            }}
-          />
-          <TextSizePicker
-            size={activeComponentProps.textSize}
-            setSize={(size) =>
-              setActiveComponentProps((activeComponentProps: any) => ({
-                ...activeComponentProps,
-                textSize: size,
-              }))
-            }
-          />
+          <ColorPicker />
+          <TextSizePicker />
         </div>
-        <UserProfile
-          onLoginAttempt={handleLogin}
-          onLogout={handleLogout}
-          onMyChalkboards={handleMyChalkboards}
-        />
+        <UserProfile />
       </header>
-      <MyChalkboards
-        open={myChalkboardsModalOpen}
-        setOpen={setMyChalkboardsModalOpen}
-        onSelected={handleLoadCanvas}
-      />
-      <ActiveComponentProvider value={{ activeComponent, setActiveComponent }}>
-        <ComponentCanvas
-          activeComponent={activeComponent}
-          activeComponentProps={activeComponentProps}
-          components={chalkboardData}
-          setComponents={setChalkboardData}
-        />
-      </ActiveComponentProvider>
-      <ToastNotification
-        toastNotification={toastNotification}
-        setToastNotification={setToastNotification}
-      />
+      <MyChalkboards onSelected={handleLoadCanvas} />
+      <ComponentCanvas />
+      <ToastNotification />
+      <SelectionManager />
+      <MoveableManager />
     </div>
   );
 };

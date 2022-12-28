@@ -1,17 +1,21 @@
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import React from 'react';
 import FormatSizeIcon from '@mui/icons-material/FormatSize';
+import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
 
 export type TextSize = 'small' | 'medium' | 'large';
 
 interface TextSizePickerProps {
-  size: TextSize;
-  setSize: (size: TextSize) => void;
 }
 
-const TextSizePicker: React.FC<TextSizePickerProps> = ({ size, setSize }) => {
+const TextSizePicker: React.FC<TextSizePickerProps> = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const { size, setSize } = useActiveComponentStore((state) => ({
+    size: state.activeComponentProps.size,
+    setSize: state.updateTextSize,
+  }));
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);

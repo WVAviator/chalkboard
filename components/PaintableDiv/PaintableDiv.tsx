@@ -1,7 +1,9 @@
 import React from 'react';
 import withRightClickMenu from '../../hocs/withRightClickMenu';
-import useDragTransform, { Transform } from '../../hooks/useDragTransform';
-import { ActiveComponentContext } from '../ActiveComponentProvider/ActiveComponentProvider';
+import withSelectable from '../../hocs/withSelectable';
+import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
+import { useCanvasRefStore } from '../../hooks/useCanvasRefStore';
+import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 import {
   PaintableComponentData,
   PaintableComponentProps,
@@ -10,123 +12,117 @@ import styles from './PaintableDiv.module.css';
 
 export interface PaintableDivData extends PaintableComponentData {
   position: number[][];
-  size: number[][];
-  transform: Transform;
 }
 interface PaintableDivProps extends PaintableComponentProps {
-  children?: React.ReactNode;
   minWidth?: number;
   minHeight?: number;
   onCreated?: () => void;
   shadow?: 'none' | 'default' | 'dragonly';
+  children: React.ReactNode;
 }
 
-const PaintableDiv: React.FC<PaintableDivProps> = ({
-  color = '#FFFFFF',
-  children = null,
-  createEvent,
-  data,
-  setData,
-  canvasRect,
-  minWidth = 0,
-  minHeight = 0,
-  onCreated,
-  shadow = 'default',
-}) => {
-  const [position, setPosition] = React.useState(
-    createEvent
-      ? [
-          createEvent.clientX - canvasRect.left,
-          createEvent.clientY - canvasRect.top,
-        ]
-      : data.position
-  );
-  const [size, setSize] = React.useState(
-    createEvent ? [minWidth, minHeight] : data.size
-  );
-  const [isSizing, setIsSizing] = React.useState(!!createEvent);
+const PaintableDiv = React.forwardRef<HTMLDivElement, PaintableDivProps>(
+  (
+    {
+      color = '#FFFFFF',
+      children,
+      createEvent,
+      minWidth = 0,
+      minHeight = 0,
+      onCreated,
+      shadow = 'default',
+      id,
+    },
+    forwardedRef
+  ) => {
+    const { data, setData } = useChalkboardDataStore((state) => ({
+      data: state.getComponent(id).data,
+      setData: (data: any) => state.updateComponent(id, { data }),
+    }));
+    const canvasRect = useCanvasRefStore((state) => state.canvasRect);
 
-  const { transform, isDragging, dragEvents } = useDragTransform(
-    createEvent ? { x: 0, y: 0 } : data.transform,
-    canvasRect,
-    (transform) => setData({ ...data, transform })
-  );
+    const [position, setPosition] = React.useState(
+      createEvent
+        ? [
+            createEvent.clientX - canvasRect.left,
+            createEvent.clientY - canvasRect.top,
+          ]
+        : data.position
+    );
 
-  const { activeComponent, setActiveComponent } = React.useContext(
-    ActiveComponentContext
-  );
+    const [isSizing, setIsSizing] = React.useState(!!createEvent);
 
-  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    dragEvents.handlePointerMove(event);
+    const { activeComponent, resetActiveComponent } = useActiveComponentStore(
+      (state) => ({
+        activeComponent: state.activeComponent,
+        resetActiveComponent: state.resetActiveComponent,
+      })
+    );
 
-    if (!isSizing) return;
-    if (event.buttons !== 1) return;
-    const [x, y] = [
-      event.clientX - canvasRect.left,
-      event.clientY - canvasRect.top,
-    ];
-    const size = [
-      Math.max(x - position[0], minWidth),
-      Math.max(y - position[1], minHeight),
-    ];
-    setSize(size);
-  };
+    const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+      if (!isSizing) return;
+      if (event.buttons !== 1) return;
+      const [x, y] = [
+        event.clientX - canvasRect.left,
+        event.clientY - canvasRect.top,
+      ];
+      const width = Math.max(x - position[0], minWidth);
+      const height = Math.max(y - position[1], minHeight);
+      setData({ ...data, width, height });
+    };
 
-  const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
-    dragEvents.handlePointerUp(event);
+    const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+      if (!isSizing) return;
+      setIsSizing(false);
+      resetActiveComponent();
+      setData({
+        ...data,
+        position,
+        // transform,
+      });
+      onCreated && onCreated();
+    };
 
-    if (!isSizing) return;
-    setIsSizing(false);
-    setActiveComponent(null);
-    setData({
-      ...data,
-      position,
-      size,
-      transform,
-    });
-    onCreated && onCreated();
-  };
-
-  const boxShadow = React.useMemo(() => {
-    return {
-      default:
-        'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px',
-      none: 'none',
-      dragonly:
-        isDragging || isSizing
+    const boxShadow = React.useMemo(() => {
+      return {
+        default:
+          'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px',
+        none: 'none',
+        dragonly: isSizing
           ? 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px'
           : 'none',
-    };
-  }, [isDragging, isSizing]);
+      };
+    }, [isSizing]);
 
-  return (
-    <div
-      className={styles.outer}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      style={{ pointerEvents: isSizing || isDragging ? 'all' : 'none' }}
-    >
+    return (
       <div
-        className={styles.inner}
-        onPointerDown={(event) => {
-          if (activeComponent || isSizing) return;
-          dragEvents.handlePointerDown(event);
-        }}
-        style={{
-          left: `${position[0]}px`,
-          top: `${position[1]}px`,
-          width: `${size[0]}px`,
-          height: `${size[1]}px`,
-          pointerEvents: activeComponent ? 'none' : 'all',
-          transform: `translateX(${transform.x}px) translateY(${transform.y}px)`,
-          backgroundColor: color,
-          boxShadow: boxShadow[shadow],
-        }}
+        className={styles.outer}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        style={{ pointerEvents: isSizing ? 'all' : 'none' }}
       >
-        {children}
+        <div
+          id={id}
+          className={styles.inner}
+          ref={forwardedRef}
+          style={{
+            left: `${position[0]}px`,
+            top: `${position[1]}px`,
+            width: `${data.width}px`,
+            height: `${data.height}px`,
+            pointerEvents: activeComponent ? 'none' : 'all',
+            transform: data.transform,
+            backgroundColor: color,
+            boxShadow: boxShadow[shadow],
+          }}
+        >
+          {children}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
 
-export default withRightClickMenu(PaintableDiv);
+export default withRightClickMenu<PaintableDivProps>(
+  withSelectable<PaintableDivProps>(PaintableDiv)
+);

@@ -1,4 +1,4 @@
-import Editor, { Monaco } from '@monaco-editor/react';
+import Editor from '@monaco-editor/react';
 import React, { MouseEvent, useEffect } from 'react';
 import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
 import PaintableDiv, { PaintableDivData } from '../PaintableDiv/PaintableDiv';
@@ -9,6 +9,7 @@ import CodeEditorModal, {
   CodeContext,
 } from '../CodeEditorModal/CodeEditorModal';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 
 export interface PaintableCodeEditorData extends PaintableDivData {
   codeContext: CodeContext;
@@ -26,11 +27,14 @@ const defaultCodeContext: CodeContext = {
 
 const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
   createEvent,
-  data,
-  setData,
   color = '#eb5c08',
+  id,
   ...rest
 }) => {
+  const { data, setData } = useChalkboardDataStore((state) => ({
+    data: state.getComponent(id).data,
+    setData: (data: any) => state.updateComponent(id, { data }),
+  }));
   const [consoleOutput, setConsoleOutput] = React.useState<string[]>([]);
   const [loadingConsoleOutput, setLoadingConsoleOutput] =
     React.useState<boolean>(false);
@@ -82,11 +86,10 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
   return (
     <PaintableDiv
       createEvent={createEvent}
-      data={data}
-      setData={setData}
       color={color}
       minWidth={300}
       minHeight={200}
+      id={id}
       {...rest}
     >
       <div className={styles.wrapper}>
@@ -108,9 +111,6 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
               height="100%"
               width="100%"
               theme="vs-dark"
-              // defaultValue={
-              //   defaultCodeContext.main
-              // }
               value={data.codeContext.main}
               onChange={handleEditorChange}
             />

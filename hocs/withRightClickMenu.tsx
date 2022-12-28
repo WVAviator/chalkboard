@@ -1,9 +1,12 @@
 import React from 'react';
 import { Menu, MenuItem, PopoverPosition } from '@mui/material';
 import {
+  PaintableComponent,
   PaintableComponentData,
   PaintableComponentProps,
 } from '../components/ComponentCanvas/ComponentCanvas';
+import { useChalkboardDataStore } from '../hooks/useChalkboardDataStore';
+import { useSelectionStore } from '../hooks/useSelectionStore';
 
 export interface ContextMenuItem {
   label: string;
@@ -11,15 +14,25 @@ export interface ContextMenuItem {
 }
 
 const withRightClickMenu = <P extends PaintableComponentProps>(
-  WrappedComponent: React.ComponentType<P>,
+  WrappedComponent: PaintableComponent,
   additionalMenuItems?: ContextMenuItem[]
 ) => {
   return (props: P) => {
-    // const [anchorEl, setAnchorEl] = React.useState(null);
     const [anchorPosition, setAnchorPosition] =
       React.useState<PopoverPosition | null>(null);
 
-    // const wrappedComponentRef = React.useRef<React.ComponentType<P>>(null);
+    const { moveComponent, removeComponent } = useChalkboardDataStore(
+      (state) => ({
+        moveComponent: state.moveComponent,
+        removeComponent: state.removeComponent,
+      })
+    );
+
+    const wrappedComponentRef = React.useRef<HTMLElement>(null);
+
+    const removeSelectedElementById = useSelectionStore(
+      (state) => state.removeSelectedElementById
+    );
 
     const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
       event.preventDefault();
@@ -33,49 +46,28 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
 
     const handleDelete = () => {
       setAnchorPosition(null);
-
-      props.setComponents((components: PaintableComponentData[]) => {
-        return components.filter((component) => component.id !== props.id);
-      });
+      removeSelectedElementById(props.id);
+      removeComponent(props.id);
     };
 
     const handleBringToFront = () => {
       setAnchorPosition(null);
-
-      props.setComponents((components: PaintableComponentData[]) => {
-        const newComponents = [...components];
-        const componentIndex = newComponents.findIndex(
-          (component) => component.id === props.id
-        );
-        const component = newComponents.splice(componentIndex, 1)[0];
-        newComponents.push(component);
-        return newComponents;
-      });
+      moveComponent(props.id);
     };
 
     const handleSendToBack = () => {
       setAnchorPosition(null);
-
-      props.setComponents((components: PaintableComponentData[]) => {
-        const newComponents = [...components];
-        const componentIndex = newComponents.findIndex(
-          (component) => component.id === props.id
-        );
-        const component = newComponents.splice(componentIndex, 1)[0];
-        newComponents.unshift(component);
-        return newComponents;
-      });
+      moveComponent(props.id, 0);
     };
 
     return (
       <div id="wrapper" onContextMenu={handleRightClick}>
-        <WrappedComponent {...props} />
+        <WrappedComponent ref={wrappedComponentRef} {...props} />
         <Menu
           anchorReference="anchorPosition"
           anchorPosition={anchorPosition}
           open={Boolean(anchorPosition)}
           onClose={handleClose}
-          //   ref={wrappedComponentRef}
         >
           <MenuItem onClick={handleDelete}>Delete</MenuItem>
           <MenuItem onClick={handleBringToFront}>Bring to Front</MenuItem>

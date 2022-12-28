@@ -1,17 +1,19 @@
-import { Button, IconButton, Menu } from '@mui/material';
+import { IconButton, Menu } from '@mui/material';
 import React from 'react';
 import { ChromePicker, ColorResult } from 'react-color';
-import styles from './ColorPicker.module.css';
 import ColorLensIcon from '@mui/icons-material/ColorLens';
+import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
 
-interface ColorPickerProps {
-  color: string;
-  setColor: (color: string) => void;
-}
+interface ColorPickerProps {}
 
-const ColorPicker: React.FC<ColorPickerProps> = ({ color, setColor }) => {
+const ColorPicker: React.FC<ColorPickerProps> = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const { color, setColor } = useActiveComponentStore((state) => ({
+    color: state.activeComponentProps.color,
+    setColor: state.updateColor,
+  }));
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
