@@ -3,7 +3,7 @@ import create from 'zustand';
 interface SelectionStore {
   selectableElements: HTMLElement[];
   addSelectableElement: (element: HTMLElement) => void;
-  removeSelectableElement: (element: HTMLElement) => void;
+  removeSelectableElement: (id: string) => void;
   selectedElements: (HTMLElement | SVGElement)[];
   addSelectedElement: (element: HTMLElement | SVGElement) => void;
   removeSelectedElement: (element: HTMLElement | SVGElement) => void;
@@ -18,11 +18,9 @@ export const useSelectionStore = create<SelectionStore>((set) => ({
     set((state) => ({
       selectableElements: [...state.selectableElements, element],
     })),
-  removeSelectableElement: (element) =>
+  removeSelectableElement: (id) =>
     set((state) => ({
-      selectableElements: state.selectableElements.filter(
-        (el) => el !== element
-      ),
+      selectableElements: state.selectableElements.filter((el) => el.id !== id),
     })),
   selectedElements: [],
   addSelectedElement: (element) =>

@@ -30,9 +30,11 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
 
     const wrappedComponentRef = React.useRef<HTMLElement>(null);
 
-    const removeSelectedElementById = useSelectionStore(
-      (state) => state.removeSelectedElementById
-    );
+    const { removeSelectedElementById, removeSelectableElement } =
+      useSelectionStore((state) => ({
+        removeSelectedElementById: state.removeSelectedElementById,
+        removeSelectableElement: state.removeSelectableElement,
+      }));
 
     const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
       event.preventDefault();
@@ -47,6 +49,8 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
     const handleDelete = () => {
       setAnchorPosition(null);
       removeSelectedElementById(props.id);
+      // removeSelectableElement(props.id);
+
       removeComponent(props.id);
     };
 
