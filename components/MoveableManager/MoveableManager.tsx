@@ -52,22 +52,34 @@ const MoveableManager = () => {
 
   return (
     <Moveable
-      target={selectedElements}
+      targets={selectedElements}
       origin={false}
       draggable={true}
       onDrag={({ target, transform }) => {
         target.style.transform = transform;
         updateComponentData(target.id, { transform });
       }}
+      onDragGroup={({ events }) => {
+        events.forEach(({ target, transform }) => {
+          target.style.transform = transform;
+          updateComponentData(target.id, { transform });
+        });
+      }}
       // SVG path elements should be scaled versus resized
-      scalable={selectedElements[0].id.startsWith('svg')}
+      scalable={
+        selectedElements.length === 1 &&
+        selectedElements[0].id.startsWith('svg')
+      }
       onScale={({ target, transform }) => {
         if (!target.id.startsWith('svg')) {
           return;
         }
         updateComponentData(target.id, { transform });
       }}
-      resizable={!selectedElements[0].id.startsWith('svg')}
+      resizable={
+        selectedElements.length === 1 &&
+        !selectedElements[0].id.startsWith('svg')
+      }
       onResize={({ target, width, height }) => {
         if (target.id.startsWith('svg')) {
           return;
@@ -77,7 +89,7 @@ const MoveableManager = () => {
         target.style.height = `${height}px`;
         updateComponentData(target.id, { width, height });
       }}
-      rotatable={true}
+      rotatable={selectedElements.length === 1}
       onRotate={({ target, transform }) => {
         updateComponentData(target.id, { transform });
       }}
