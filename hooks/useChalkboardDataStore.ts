@@ -24,6 +24,7 @@ export interface ChalkboardDataStore {
     componentId: string,
     update: Partial<PaintableComponentData>
   ) => void;
+  updateComponentData: (componentId: string, update: any) => void;
   moveComponent: (componentId: string, newIndex?: number) => void;
   updateTitle: (title: string) => void;
   getComponent: (componentId: string) => PaintableComponentData | undefined;
@@ -165,6 +166,24 @@ export const useChalkboardDataStore = create<ChalkboardDataStore>(
           return component;
         }),
       })),
+
+    updateComponentData: (componentId: string, update: any) =>
+      set((state) => ({
+        chalkboardComponents: state.chalkboardComponents.map((component) => {
+          if (component.id === componentId) {
+            const newComponent = {
+              ...component,
+              data: {
+                ...component.data,
+                ...update,
+              },
+            };
+            return newComponent;
+          }
+          return component;
+        }),
+      })),
+
     moveComponent: (componentId: string, index: number = -1) =>
       set((state) => {
         const components = state.chalkboardComponents;

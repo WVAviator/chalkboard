@@ -1,4 +1,4 @@
-import Editor, { Monaco } from '@monaco-editor/react';
+import Editor from '@monaco-editor/react';
 import React, { MouseEvent, useEffect } from 'react';
 import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
 import PaintableDiv, { PaintableDivData } from '../PaintableDiv/PaintableDiv';

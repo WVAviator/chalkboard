@@ -34,14 +34,12 @@ const PaintableText: React.FC<PaintableTextProps> = ({
     setTimeout(() => textareaRef.current?.focus(), 0);
   };
 
-  const handlePointerDown = (
-    event: React.PointerEvent<HTMLTextAreaElement>
-  ) => {
+  const handlePointerDown = () => {
     setQuickClick(true);
     setTimeout(() => setQuickClick(false), 200);
   };
 
-  const handlePointerUp = (event: React.PointerEvent<HTMLTextAreaElement>) => {
+  const handlePointerUp = () => {
     if (quickClick) {
       setEditing(true);
       setTimeout(() => textareaRef.current?.focus(), 0);
@@ -59,7 +57,6 @@ const PaintableText: React.FC<PaintableTextProps> = ({
   return (
     <PaintableDiv
       createEvent={createEvent}
-      //   canvasRect={canvasRect}
       color={'transparent'}
       onCreated={handleCreated}
       minHeight={divHeight}

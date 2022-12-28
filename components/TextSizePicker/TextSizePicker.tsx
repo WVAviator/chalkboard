@@ -6,8 +6,6 @@ import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
 export type TextSize = 'small' | 'medium' | 'large';
 
 interface TextSizePickerProps {
-  // size: TextSize;
-  // setSize: (size: TextSize) => void;
 }
 
 const TextSizePicker: React.FC<TextSizePickerProps> = () => {

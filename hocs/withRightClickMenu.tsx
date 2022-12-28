@@ -1,10 +1,12 @@
 import React from 'react';
 import { Menu, MenuItem, PopoverPosition } from '@mui/material';
 import {
+  PaintableComponent,
   PaintableComponentData,
   PaintableComponentProps,
 } from '../components/ComponentCanvas/ComponentCanvas';
 import { useChalkboardDataStore } from '../hooks/useChalkboardDataStore';
+import { useSelectionStore } from '../hooks/useSelectionStore';
 
 export interface ContextMenuItem {
   label: string;
@@ -12,7 +14,7 @@ export interface ContextMenuItem {
 }
 
 const withRightClickMenu = <P extends PaintableComponentProps>(
-  WrappedComponent: React.ComponentType<P>,
+  WrappedComponent: PaintableComponent,
   additionalMenuItems?: ContextMenuItem[]
 ) => {
   return (props: P) => {
@@ -24,6 +26,12 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
         moveComponent: state.moveComponent,
         removeComponent: state.removeComponent,
       })
+    );
+
+    const wrappedComponentRef = React.useRef<HTMLElement>(null);
+
+    const removeSelectedElementById = useSelectionStore(
+      (state) => state.removeSelectedElementById
     );
 
     const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -38,7 +46,7 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
 
     const handleDelete = () => {
       setAnchorPosition(null);
-
+      removeSelectedElementById(props.id);
       removeComponent(props.id);
     };
 
@@ -54,7 +62,7 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
 
     return (
       <div id="wrapper" onContextMenu={handleRightClick}>
-        <WrappedComponent {...props} />
+        <WrappedComponent ref={wrappedComponentRef} {...props} />
         <Menu
           anchorReference="anchorPosition"
           anchorPosition={anchorPosition}

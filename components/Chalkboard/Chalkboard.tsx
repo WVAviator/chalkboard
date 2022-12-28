@@ -21,6 +21,8 @@ import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
 import { useToastNotificationStore } from '../../hooks/useToastNotificationStore';
 import { useModalStore } from '../../hooks/useModalStore';
+import SelectionManager from '../SelectionManager/SelectionManager';
+import MoveableManager from '../MoveableManager/MoveableManager';
 
 const Chalkboard: React.FC = () => {
   const chalkboardState = useChalkboardDataStore();
@@ -127,6 +129,8 @@ const Chalkboard: React.FC = () => {
       <MyChalkboards onSelected={handleLoadCanvas} />
       <ComponentCanvas />
       <ToastNotification />
+      <SelectionManager />
+      <MoveableManager />
     </div>
   );
 };
