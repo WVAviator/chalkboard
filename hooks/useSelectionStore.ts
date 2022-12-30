@@ -10,6 +10,7 @@ interface SelectionStore {
   removeSelectedElementById: (id: string) => void;
   selectionEnabled: boolean;
   setSelectionEnabled: (enabled: boolean) => void;
+  clearSelection: () => void;
 }
 
 export const useSelectionStore = create<SelectionStore>((set) => ({
@@ -37,4 +38,5 @@ export const useSelectionStore = create<SelectionStore>((set) => ({
     })),
   selectionEnabled: false,
   setSelectionEnabled: (enabled: boolean) => set({ selectionEnabled: enabled }),
+  clearSelection: () => set({ selectedElements: [] }),
 }));
