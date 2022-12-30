@@ -13,7 +13,7 @@ import styles from './PaintableDiv.module.css';
 export interface PaintableDivData extends PaintableComponentData {
   position: number[][];
 }
-interface PaintableDivProps extends PaintableComponentProps {
+export interface PaintableDivProps extends PaintableComponentProps {
   minWidth?: number;
   minHeight?: number;
   onCreated?: () => void;
