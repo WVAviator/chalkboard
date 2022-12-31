@@ -9,7 +9,11 @@ const SelectionManager = () => {
   const canvasRef = useCanvasRefStore((state) => state.canvasRef);
   const [shiftKeyHeld, setShiftKeyHeld] = React.useState(false);
 
-  const { hasFocus } = useFocusEvents(() => clearSelection());
+  const handleFocus = () => {
+    clearSelection();
+  };
+
+  const { hasFocus } = useFocusEvents(canvasRef, handleFocus);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

@@ -112,7 +112,7 @@ const ComponentCanvas: React.FC<ComponentCanvasProps> = ({
     setCanvasRef(canvasRef);
   }, [canvasRef, setCanvasRef]);
 
-  const { hasFocus } = useFocusEvents();
+  const { hasFocus } = useFocusEvents(canvasRef);
 
   useEffect(() => {
     const handlePaste = (event: ClipboardEvent) => {
