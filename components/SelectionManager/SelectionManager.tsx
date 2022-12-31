@@ -59,7 +59,6 @@ const SelectionManager = () => {
       selectFromInside={false}
       onSelect={(e) => {
         e.added.forEach((el) => {
-          console.log(el);
           addSelectedElement(el);
         });
         e.removed.forEach((el) => {
