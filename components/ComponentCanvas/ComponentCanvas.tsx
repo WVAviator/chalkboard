@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
 import { useCanvasRefStore } from '../../hooks/useCanvasRefStore';
 import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
+import useFocusEvents from '../../hooks/useFocusEvents';
 import ClipboardComponent from '../ClipboardPaste/ClipboardComponent';
 import PaintableCodeEditor from '../PaintableCodeEditor/PaintableCodeEditor';
 import PaintableDiv from '../PaintableDiv/PaintableDiv';
@@ -111,11 +112,15 @@ const ComponentCanvas: React.FC<ComponentCanvasProps> = ({
     setCanvasRef(canvasRef);
   }, [canvasRef, setCanvasRef]);
 
+  const { hasFocus } = useFocusEvents();
+
   useEffect(() => {
-    console.log("I'm listening for paste events.");
     const handlePaste = (event: ClipboardEvent) => {
       event.preventDefault();
-      console.log('Paste event triggered. ', event);
+
+      // When another element has focus, this paste event should not be handled.
+      if (hasFocus) return;
+
       addComponent({
         type: 'paste',
         props: {
@@ -135,7 +140,7 @@ const ComponentCanvas: React.FC<ComponentCanvasProps> = ({
     return () => {
       document.removeEventListener('paste', handlePaste);
     };
-  }, [addComponent]);
+  }, [addComponent, hasFocus]);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!activeComponent) {
