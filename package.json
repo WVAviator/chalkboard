@@ -18,6 +18,7 @@
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.0",
     "@next-auth/mongodb-adapter": "^1.1.1",
+    "aws-sdk": "^2.1285.0",
     "axios": "^1.2.1",
     "mongodb": "^4.12.1",
     "mongoose": "^6.8.0",

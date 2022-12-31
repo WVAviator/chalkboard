@@ -2,11 +2,14 @@ import React from 'react';
 import Selecto from 'react-selecto';
 import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
 import { useCanvasRefStore } from '../../hooks/useCanvasRefStore';
+import useFocusEvents from '../../hooks/useFocusEvents';
 import { useSelectionStore } from '../../hooks/useSelectionStore';
 
 const SelectionManager = () => {
   const canvasRef = useCanvasRefStore((state) => state.canvasRef);
   const [shiftKeyHeld, setShiftKeyHeld] = React.useState(false);
+
+  const { hasFocus } = useFocusEvents(() => clearSelection());
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -32,23 +35,22 @@ const SelectionManager = () => {
     addSelectedElement,
     selectedElements,
     removeSelectedElement,
+    clearSelection,
   } = useSelectionStore((state) => ({
     selectableElements: state.selectableElements,
     addSelectedElement: state.addSelectedElement,
     selectedElements: state.selectedElements,
     removeSelectedElement: state.removeSelectedElement,
+    clearSelection: state.clearSelection,
   }));
 
   const activeComponent = useActiveComponentStore(
     (state) => state.activeComponent
   );
 
-  if (!canvasRef?.current || activeComponent) {
-    return null;
-  }
-
   return (
     <Selecto
+      dragCondition={(e) => canvasRef?.current && !activeComponent && !hasFocus}
       container={canvasRef.current}
       selectableTargets={selectableElements}
       toggleContinueSelect={['shift']}
@@ -57,7 +59,6 @@ const SelectionManager = () => {
       selectFromInside={false}
       onSelect={(e) => {
         e.added.forEach((el) => {
-          console.log(el);
           addSelectedElement(el);
         });
         e.removed.forEach((el) => {

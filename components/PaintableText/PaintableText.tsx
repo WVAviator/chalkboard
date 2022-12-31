@@ -1,11 +1,11 @@
 import React from 'react';
 import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
-import PaintableDiv from '../PaintableDiv/PaintableDiv';
+import PaintableDiv, { PaintableDivProps } from '../PaintableDiv/PaintableDiv';
 import { TextSize } from '../TextSizePicker/TextSizePicker';
 import styles from './PaintableText.module.css';
 
-interface PaintableTextProps extends PaintableComponentProps {
+export interface PaintableTextProps extends PaintableDivProps {
   textSize?: TextSize;
 }
 
