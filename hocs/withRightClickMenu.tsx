@@ -30,9 +30,11 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
 
     const wrappedComponentRef = React.useRef<HTMLElement>(null);
 
-    const removeSelectedElementById = useSelectionStore(
-      (state) => state.removeSelectedElementById
-    );
+    const { removeSelectedElementById, removeSelectableElement } =
+      useSelectionStore((state) => ({
+        removeSelectedElementById: state.removeSelectedElementById,
+        removeSelectableElement: state.removeSelectableElement,
+      }));
 
     const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
       event.preventDefault();
@@ -47,6 +49,8 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
     const handleDelete = () => {
       setAnchorPosition(null);
       removeSelectedElementById(props.id);
+      // removeSelectableElement(props.id);
+
       removeComponent(props.id);
     };
 
@@ -69,11 +73,21 @@ const withRightClickMenu = <P extends PaintableComponentProps>(
           open={Boolean(anchorPosition)}
           onClose={handleClose}
         >
-          <MenuItem onClick={handleDelete}>Delete</MenuItem>
-          <MenuItem onClick={handleBringToFront}>Bring to Front</MenuItem>
-          <MenuItem onClick={handleSendToBack}>Send to Back</MenuItem>
+          <MenuItem id="contextmenu-delete" onClick={handleDelete}>
+            Delete
+          </MenuItem>
+          <MenuItem id="contextmenu-bringtofront" onClick={handleBringToFront}>
+            Bring to Front
+          </MenuItem>
+          <MenuItem id="contextmenu-sendtoback" onClick={handleSendToBack}>
+            Send to Back
+          </MenuItem>
           {additionalMenuItems?.map((item) => {
-            return <MenuItem onClick={item.onClick}>{item.label}</MenuItem>;
+            return (
+              <MenuItem id={`contextmenu-${item.label}`} onClick={item.onClick}>
+                {item.label}
+              </MenuItem>
+            );
           })}
         </Menu>
       </div>

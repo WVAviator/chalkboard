@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useActiveComponentStore } from '../../hooks/useActiveComponentStore';
 import { useCanvasRefStore } from '../../hooks/useCanvasRefStore';
 import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
+import useFocusEvents from '../../hooks/useFocusEvents';
+import ClipboardComponent from '../ClipboardPaste/ClipboardComponent';
 import PaintableCodeEditor from '../PaintableCodeEditor/PaintableCodeEditor';
 import PaintableDiv from '../PaintableDiv/PaintableDiv';
 import PaintableSVG from '../PaintableSVG/PaintableSVG';
@@ -25,7 +27,7 @@ export interface PaintableComponentData {
   /**
    * The props of the component. This is used to store and pass props to the React component.
    */
-  props?: PaintableComponentProps;
+  props?: PaintableComponentProps & any;
 
   /**
    * The data of the component. This is used to store any data that the component needs to be parsed.
@@ -65,6 +67,7 @@ const defaultPaintableComponentMap: PaintableComponentMap = {
   div: PaintableDiv,
   code: PaintableCodeEditor,
   text: PaintableText,
+  paste: ClipboardComponent,
   none: () => null,
 };
 
@@ -108,6 +111,36 @@ const ComponentCanvas: React.FC<ComponentCanvasProps> = ({
     if (!canvasRef.current) return;
     setCanvasRef(canvasRef);
   }, [canvasRef, setCanvasRef]);
+
+  const { hasFocus } = useFocusEvents(canvasRef);
+
+  useEffect(() => {
+    const handlePaste = (event: ClipboardEvent) => {
+      event.preventDefault();
+
+      // When another element has focus, this paste event should not be handled.
+      if (hasFocus) return;
+
+      addComponent({
+        type: 'paste',
+        props: {
+          createEvent: null,
+          pasteEvent: event,
+        },
+        id: `paste-${Math.random().toString(36).slice(2, 7)}`,
+        data: {
+          width: 300,
+          height: 300,
+          position: [100, 100],
+        },
+      });
+    };
+
+    document.addEventListener('paste', handlePaste);
+    return () => {
+      document.removeEventListener('paste', handlePaste);
+    };
+  }, [addComponent, hasFocus]);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!activeComponent) {

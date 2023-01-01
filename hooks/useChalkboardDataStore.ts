@@ -7,12 +7,14 @@ export interface ChalkboardDataStore {
   chalkboardTitle: string;
   resetChalkboard: () => void;
   loadFromDatabase: (
+    fetcher: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
     chalkboardId: string,
     onSuccess?: (message: string) => void,
     onError?: (error: string) => void
   ) => void;
   loadFromLocalStorage: () => void;
   saveToDatabase: (
+    fetcher: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
     saveAsNew: boolean,
     onSuccess?: (message: string) => void,
     onError?: (error: string) => void
@@ -42,6 +44,7 @@ export const useChalkboardDataStore = create<ChalkboardDataStore>(
         chalkboardTitle: 'Untitled',
       }),
     loadFromDatabase: async (
+      fetcher: (url: string, options?: RequestInit) => Promise<Response>,
       chalkboardId: string,
       onSuccess: (message: string) => void,
       onError: (error: string) => void
@@ -51,7 +54,7 @@ export const useChalkboardDataStore = create<ChalkboardDataStore>(
         chalkboardId: null,
         chalkboardTitle: 'Untitled',
       });
-      const response = await fetch(`/api/canvas/${chalkboardId}`);
+      const response = await fetcher(`/api/canvas/${chalkboardId}`);
       const { data, success } = await response.json();
       if (success) {
         set({
@@ -81,6 +84,7 @@ export const useChalkboardDataStore = create<ChalkboardDataStore>(
       }
     },
     saveToDatabase: async (
+      fetcher,
       saveAsNew: boolean,
       onSuccess: (message: string) => void,
       onError: (error: string) => void
@@ -96,7 +100,7 @@ export const useChalkboardDataStore = create<ChalkboardDataStore>(
       let response;
 
       if (!chalkboardId || saveAsNew) {
-        response = await fetch('/api/canvas', {
+        response = await fetcher('/api/canvas', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -104,7 +108,7 @@ export const useChalkboardDataStore = create<ChalkboardDataStore>(
           body,
         });
       } else {
-        response = await fetch(`/api/canvas/${chalkboardId}`, {
+        response = await fetcher(`/api/canvas/${chalkboardId}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -113,15 +117,12 @@ export const useChalkboardDataStore = create<ChalkboardDataStore>(
         });
       }
 
-      const { data, success } = await response.json();
+      const { success } = await response.json();
       if (success) {
-        set({
-          chalkboardId: data._id,
-        });
-        onSuccess && onSuccess('Saved successfully!');
+        onSuccess && onSuccess('Successfully saved chalkboard.');
       } else {
         console.log('Error saving canvas');
-        onError && onError('Error occurred while saving.');
+        onError && onError('Error occurred while saving Chalkboard.');
       }
     },
     saveToLocalStorage: () => {
@@ -160,7 +161,7 @@ export const useChalkboardDataStore = create<ChalkboardDataStore>(
               ...component,
               ...update,
             };
-            newComponent.props.createEvent = null;
+            if (newComponent.props) newComponent.props.createEvent = null;
             return newComponent;
           }
           return component;

@@ -10,6 +10,7 @@ import CodeEditorModal, {
 } from '../CodeEditorModal/CodeEditorModal';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
+import { useToastNotificationStore } from '../../hooks/useToastNotificationStore';
 
 export interface PaintableCodeEditorData extends PaintableDivData {
   codeContext: CodeContext;
@@ -39,6 +40,8 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
   const [loadingConsoleOutput, setLoadingConsoleOutput] =
     React.useState<boolean>(false);
   const [modalEditorOpen, setModalEditorOpen] = React.useState<boolean>(false);
+
+  const showToastNotification = useToastNotificationStore((state) => state.showToastNotification);
 
   useEffect(() => {
     if (!createEvent) return;
@@ -79,6 +82,7 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
       console.log(
         'An error occurred while attempting to compile and execute code.'
       );
+        showToastNotification("Unable to execute code", "error");
     }
     setLoadingConsoleOutput(false);
   };

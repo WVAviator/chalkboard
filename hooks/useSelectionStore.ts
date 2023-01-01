@@ -3,13 +3,14 @@ import create from 'zustand';
 interface SelectionStore {
   selectableElements: HTMLElement[];
   addSelectableElement: (element: HTMLElement) => void;
-  removeSelectableElement: (element: HTMLElement) => void;
+  removeSelectableElement: (id: string) => void;
   selectedElements: (HTMLElement | SVGElement)[];
   addSelectedElement: (element: HTMLElement | SVGElement) => void;
   removeSelectedElement: (element: HTMLElement | SVGElement) => void;
   removeSelectedElementById: (id: string) => void;
   selectionEnabled: boolean;
   setSelectionEnabled: (enabled: boolean) => void;
+  clearSelection: () => void;
 }
 
 export const useSelectionStore = create<SelectionStore>((set) => ({
@@ -18,11 +19,9 @@ export const useSelectionStore = create<SelectionStore>((set) => ({
     set((state) => ({
       selectableElements: [...state.selectableElements, element],
     })),
-  removeSelectableElement: (element) =>
+  removeSelectableElement: (id) =>
     set((state) => ({
-      selectableElements: state.selectableElements.filter(
-        (el) => el !== element
-      ),
+      selectableElements: state.selectableElements.filter((el) => el.id !== id),
     })),
   selectedElements: [],
   addSelectedElement: (element) =>
@@ -37,6 +36,8 @@ export const useSelectionStore = create<SelectionStore>((set) => ({
     set((state) => ({
       selectedElements: state.selectedElements.filter((el) => el.id !== id),
     })),
-  selectionEnabled: false,
-  setSelectionEnabled: (enabled: boolean) => set({ selectionEnabled: enabled }),
+  selectionEnabled: true,
+  setSelectionEnabled: (enabled: boolean) =>
+    set({ selectionEnabled: enabled, selectedElements: [] }),
+  clearSelection: () => set({ selectedElements: [] }),
 }));
