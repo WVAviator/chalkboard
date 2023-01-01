@@ -1,41 +1,54 @@
-import { renderHook } from '@testing-library/react-hooks';
+import { render, renderHook } from '@testing-library/react';
+import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { useCanvasRefStore } from '../useCanvasRefStore';
 
 describe('useCanvasRefStore', () => {
-  xit('should initialize canvasRef to null', () => {
+  it('should initialize canvasRef to null', () => {
     const { result } = renderHook(() => useCanvasRefStore());
     const { canvasRef } = result.current;
     expect(canvasRef).toBe(null);
   });
 
-  xit('should set canvasRef to a given value', () => {
+  it('should set canvasRef to a given value', () => {
+    const TestComponent: React.FC = () => {
+      const { setCanvasRef } = useCanvasRefStore();
+      const ref = React.useRef<HTMLDivElement>(null);
+
+      React.useEffect(() => {
+        setCanvasRef(ref);
+      }, [ref]);
+
+      return <div data-testid="test" ref={ref} />;
+    };
+
+    const { getByTestId } = render(<TestComponent />);
+    const element = getByTestId('test');
+
     const { result } = renderHook(() => useCanvasRefStore());
-    const { canvasRef, setCanvasRef } = result.current;
+    const { canvasRef } = result.current;
 
-    const element = document.createElement('div');
-    document.body.appendChild(element);
-    const ref = { current: element };
-    act(() => {
-      setCanvasRef(ref);
-    });
-
-    // const ref = { current: document.createElement('div') };
-    // setCanvasRef(ref);
-    expect(canvasRef).toBe(ref);
+    expect(canvasRef.current).toBe(element);
   });
 
-  xit('should set canvasRect to the bounding client rect of the canvas element', () => {
+  it('should set canvasRect to the bounding client rect of the canvas element', () => {
+    const TestComponent: React.FC = () => {
+      const { setCanvasRef } = useCanvasRefStore();
+      const ref = React.useRef<HTMLDivElement>(null);
+
+      React.useEffect(() => {
+        setCanvasRef(ref);
+      }, [ref]);
+
+      return <div data-testid="test" ref={ref} />;
+    };
+
+    const { getByTestId } = render(<TestComponent />);
+    const element = getByTestId('test');
+
     const { result } = renderHook(() => useCanvasRefStore());
-    const { setCanvasRef, canvasRect } = result.current;
+    const { canvasRect } = result.current;
 
-    const element = document.createElement('div');
-    document.body.appendChild(element);
-    const ref = { current: element };
-    act(() => {
-      setCanvasRef(ref);
-    });
-
-    expect(canvasRect).toBe(ref.current.getBoundingClientRect());
+    expect(canvasRect).toEqual(element.getBoundingClientRect());
   });
 });

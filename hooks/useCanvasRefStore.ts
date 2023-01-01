@@ -9,7 +9,8 @@ export interface CanvasRefStore {
 export const useCanvasRefStore = create<CanvasRefStore>((set) => ({
   canvasRef: null,
   setCanvasRef: (ref) => {
-    set((state) => ({
+    console.log('setCanvasRef', ref);
+    return set((state) => ({
       ...state,
       canvasRef: ref,
       canvasRect: ref.current.getBoundingClientRect(),
