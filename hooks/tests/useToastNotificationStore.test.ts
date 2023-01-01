@@ -1,5 +1,5 @@
 import { useToastNotificationStore } from '../useToastNotificationStore';
-import { renderHook, act } from '@testing-library/react-hooks';
+import { renderHook, act } from '@testing-library/react';
 
 describe('useToastNotificationStore', () => {
   it('should return the correct initial state', () => {

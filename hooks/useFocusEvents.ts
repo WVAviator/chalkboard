@@ -14,7 +14,7 @@ const useFocusEvents = (
 ) => {
   const [hasFocus, setHasFocus] = React.useState(false);
   React.useEffect(() => {
-    const element = focusRef.current;
+    const element = focusRef?.current;
     if (!element) {
       return;
     }
