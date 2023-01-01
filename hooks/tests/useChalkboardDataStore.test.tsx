@@ -1,17 +1,6 @@
 import { useChalkboardDataStore } from '../useChalkboardDataStore';
 import { renderHook, act } from '@testing-library/react';
 
-const mockFetcher = jest.fn(async () => ({
-  json: () => ({
-    success: true,
-    data: {
-      _id: 'mock-id',
-      components: [],
-      title: 'mock-title',
-    },
-  }),
-}));
-
 describe('useChalkboardDataStore', () => {
   beforeEach(() => {
     localStorage.clear();
