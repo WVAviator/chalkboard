@@ -14,6 +14,7 @@ Chalkboard is a web application that combines the functionality of a code editor
 - [MongoDB](https://www.mongodb.com/)
 - [Rapid API / Judge0](https://api.judge0.com/)
 - [Github OAuth](https://github.com/)
+- [Amazon S3 Bucket](https://aws.amazon.com/s3/)
 
 ### Installation
 
@@ -38,6 +39,10 @@ RAPIDAPI_KEY=
 GITHUB_CLIENT_ID=
 GITHUB_CLIENT_SECRET=
 NEXTAUTH_URL=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=
+AWS_BUCKET=
 ```
 
 4. Start the development server
@@ -61,4 +66,7 @@ yarn dev
 - [Material-UI](https://material-ui.com/)
 - [react-color](https://casesandberg.github.io/react-color/)
 - [zustand](https://github.com/react-spring/zustand)
+- [Amazon S3](https://aws.amazon.com/s3/)
+- [Jest](https://jestjs.io/)
+- [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 
