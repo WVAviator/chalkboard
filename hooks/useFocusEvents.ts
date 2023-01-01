@@ -1,17 +1,20 @@
 import React from 'react';
-import { useCanvasRefStore } from './useCanvasRefStore';
 
 /**
  * Listens for whether any elements within the canvas have focus.
+ * @param focusRef A ref to the parent element of all elements that should be monitored for focus.
  * @param onFocusIn A callback to run when an element within the canvas receives focus.
  * @param onFocusOut A callback to run when an element within the canvas loses focus.
  * @returns { hasFocus: boolean }
  */
-const useFocusEvents = (onFocusIn?: () => void, onFocusOut?: () => void) => {
-  const canvasRef = useCanvasRefStore((state) => state.canvasRef);
+const useFocusEvents = (
+  focusRef: React.MutableRefObject<HTMLElement>,
+  onFocusIn?: () => void,
+  onFocusOut?: () => void
+) => {
   const [hasFocus, setHasFocus] = React.useState(false);
   React.useEffect(() => {
-    const element = canvasRef.current;
+    const element = focusRef?.current;
     if (!element) {
       return;
     }
@@ -32,7 +35,7 @@ const useFocusEvents = (onFocusIn?: () => void, onFocusOut?: () => void) => {
       element.removeEventListener('focusin', handleFocusIn);
       element.removeEventListener('focusout', handleFocusOut);
     };
-  }, [canvasRef]);
+  }, [focusRef]);
 
   return { hasFocus };
 };

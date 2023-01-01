@@ -36,7 +36,8 @@ export const useSelectionStore = create<SelectionStore>((set) => ({
     set((state) => ({
       selectedElements: state.selectedElements.filter((el) => el.id !== id),
     })),
-  selectionEnabled: false,
-  setSelectionEnabled: (enabled: boolean) => set({ selectionEnabled: enabled }),
+  selectionEnabled: true,
+  setSelectionEnabled: (enabled: boolean) =>
+    set({ selectionEnabled: enabled, selectedElements: [] }),
   clearSelection: () => set({ selectedElements: [] }),
 }));

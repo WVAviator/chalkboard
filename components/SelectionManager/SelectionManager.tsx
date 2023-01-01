@@ -9,7 +9,11 @@ const SelectionManager = () => {
   const canvasRef = useCanvasRefStore((state) => state.canvasRef);
   const [shiftKeyHeld, setShiftKeyHeld] = React.useState(false);
 
-  const { hasFocus } = useFocusEvents(() => clearSelection());
+  const handleFocus = () => {
+    clearSelection();
+  };
+
+  const { hasFocus } = useFocusEvents(canvasRef, handleFocus);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -51,7 +55,7 @@ const SelectionManager = () => {
   return (
     <Selecto
       dragCondition={(e) => canvasRef?.current && !activeComponent && !hasFocus}
-      container={canvasRef.current}
+      container={canvasRef?.current}
       selectableTargets={selectableElements}
       toggleContinueSelect={['shift']}
       // This enables the user to move a group of elements when shift is not held. Without it, the group would be unselected.

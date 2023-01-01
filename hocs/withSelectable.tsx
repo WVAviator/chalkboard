@@ -8,7 +8,7 @@ import { useSelectionStore } from '../hooks/useSelectionStore';
 const withSelectable = <P extends PaintableComponentProps>(
   WrappedComponent: PaintableComponent
 ) => {
-  return (props: P & { ref: React.RefObject<HTMLElement> }) => {
+  return (props: P) => {
     const { addSelectableElement, removeSelectableElement } = useSelectionStore(
       (state) => ({
         addSelectableElement: state.addSelectableElement,

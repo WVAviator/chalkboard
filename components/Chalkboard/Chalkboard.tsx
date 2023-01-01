@@ -80,6 +80,7 @@ const Chalkboard: React.FC = () => {
       label: 'Save',
       onClick: () =>
         chalkboardState.saveToDatabase(
+          fetch,
           false,
           (message) => {
             showToastNotification(message, 'success');
@@ -94,6 +95,7 @@ const Chalkboard: React.FC = () => {
       label: 'Save As',
       onClick: () =>
         chalkboardState.saveToDatabase(
+          fetch,
           true,
           (message) => {
             showToastNotification(message, 'success');
@@ -107,7 +109,7 @@ const Chalkboard: React.FC = () => {
   ];
 
   const handleLoadCanvas = async (chalkboardId: string) => {
-    chalkboardState.loadFromDatabase(chalkboardId, null, (error) => {
+    chalkboardState.loadFromDatabase(fetch, chalkboardId, null, (error) => {
       showToastNotification(error, 'error');
     });
   };
