@@ -4,7 +4,7 @@ Chalkboard is a web application that combines the functionality of a code editor
 
 - Draw freehand, squares, text, and code editors on a canvas
 - Log in to save and load canvases with OAuth authentication
-- Execute code with the built-in code editors
+- Write and execute code with the built-in code editor
 
 ## Getting started
 
@@ -14,11 +14,11 @@ Chalkboard is a web application that combines the functionality of a code editor
 - [MongoDB](https://www.mongodb.com/)
 - [Rapid API / Judge0](https://api.judge0.com/)
 - [Github OAuth](https://github.com/)
-- [Amazon S3 Bucket](https://aws.amazon.com/s3/)
+- [Amazon S3](https://aws.amazon.com/s3/)
 
 ### Installation
 
-1. Clone the repository
+1. Fork and clone the repository
 
 ```bash
 git clone https://github.com/<your-username>/chalkboard.git
