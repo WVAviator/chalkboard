@@ -14,7 +14,8 @@ I welcome any contributions to the project! Here are the steps for running the a
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/)
+To create your own environment for the application, you will need these prerequisite services to fill out all the environment variables.
+
 - [MongoDB](https://www.mongodb.com/)
 - [Rapid API / Judge0](https://api.judge0.com/)
 - [Github OAuth](https://github.com/)
@@ -42,7 +43,7 @@ MONGODB_URI=
 RAPIDAPI_KEY=
 GITHUB_CLIENT_ID=
 GITHUB_CLIENT_SECRET=
-NEXTAUTH_URL=
+NEXTAUTH_URL='http://localhost:3000/'
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
 AWS_REGION=
