@@ -56,6 +56,17 @@ AWS_BUCKET=
 yarn dev
 ```
 
+5. Create a ticket in this repository with your suggested feature or bug fix.
+6. Checkout a new feature branch in your local repository to associate with your ticket.
+
+```bash
+git checkout -b my-ticket
+```
+
+7. After making your changes and committing, open a pull request into chalkboard/development
+8. ???
+9. Profit
+
 ## Built with
 
 - [Next.js](https://nextjs.org/)
