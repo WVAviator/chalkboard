@@ -8,7 +8,9 @@ Chalkboard is a web application that combines the functionality of a code editor
 
 The application can be viewed live at [https://chalkboard.wvaviator.com/](https://chalkboard.wvaviator.com/).
 
-## Getting started
+## Contributing
+
+I welcome any contributions to the project! Here are the steps for running the application with your own setup and infrastructure.
 
 ### Prerequisites
 
