@@ -6,6 +6,8 @@ Chalkboard is a web application that combines the functionality of a code editor
 - Log in to save and load canvases with OAuth authentication
 - Write and execute code with the built-in code editor
 
+The application can be viewed live at [https://chalkboard.wvaviator.com/](https://chalkboard.wvaviator.com/).
+
 ## Getting started
 
 ### Prerequisites
