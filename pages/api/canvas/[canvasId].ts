@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import getSessionUser from '../../../lib/getSessionUser';
+import { deleteS3Image } from '../../../lib/s3';
 import CanvasModel from '../../../models/Canvas';
 
 export default async function handler(
@@ -75,6 +76,19 @@ export default async function handler(
         );
         return res.status(401).json({ message: 'Unauthorized' });
       }
+
+      canvas.components.forEach((component) => {
+        if (component.type === 'image') {
+          const urlParts = component.data.imageUrl.split('/');
+          const key = urlParts[urlParts.length - 1];
+          deleteS3Image(key);
+
+          sessionUser.accountLimits.images.current -= 1;
+          if (sessionUser.accountLimits.images.current < 0) {
+            sessionUser.accountLimits.images.current = 0;
+          }
+        }
+      });
       await canvas.delete();
 
       sessionUser.accountLimits.canvas.current -= 1;

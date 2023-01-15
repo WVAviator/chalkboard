@@ -21,3 +21,14 @@ export const generateUploadURL = async () => {
 
   return uploadURL;
 };
+
+export const deleteS3Image = (key: string) => {
+  try {
+    s3.deleteObject({
+      Bucket: process.env.CHALKBOARD_AWS_BUCKET,
+      Key: key,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
