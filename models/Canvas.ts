@@ -1,9 +1,7 @@
 import mongoose from 'mongoose';
-import { UserData } from './User';
 
 export interface CanvasData {
   title: string;
-  // user: UserData;
   userEmail: string;
   components: {
     type: string;
@@ -20,13 +18,9 @@ const canvasSchema = new mongoose.Schema<CanvasData>({
     required: true,
   },
   userEmail: {
-    // type: mongoose.Schema.Types.ObjectId,
-    // ref: 'User',
     type: String,
     required: true,
   },
-  // TODO: Add above code for user field once user model is working
-  // user: String,
   components: [
     {
       type: {
