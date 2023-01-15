@@ -16,6 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import React, { MouseEvent } from 'react';
 import styles from './MyChalkboards.module.css';
 import { useModalStore } from '../../hooks/useModalStore';
+import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
 
 interface ChalkboardFile {
   id: string;
@@ -33,6 +34,11 @@ const MyChalkboards: React.FC<MyChalkboardsProps> = ({ onSelected }) => {
   const { open, close } = useModalStore((state) => ({
     open: state.myChalkboardsModalOpen,
     close: state.closeMyChalkboardsModal,
+  }));
+
+  const { chalkboardId, resetChalkboard } = useChalkboardDataStore((state) => ({
+    chalkboardId: state.chalkboardId,
+    resetChalkboard: state.resetChalkboard,
   }));
 
   React.useEffect(() => {
@@ -57,6 +63,9 @@ const MyChalkboards: React.FC<MyChalkboardsProps> = ({ onSelected }) => {
       setChalkboards((chalkboards) =>
         chalkboards.filter((chalkboard) => chalkboard.id !== id)
       );
+      if (chalkboardId === id) {
+        resetChalkboard();
+      }
     } else {
       console.log('Error deleting chalkboard');
     }

@@ -21,7 +21,7 @@ export interface ChalkboardDataStore {
   ) => void;
   saveToLocalStorage: () => void;
   addComponent: (component: PaintableComponentData) => void;
-  removeComponent: (componentId: string) => void;
+  removeComponent: (componentId: string, dueToFailure?: boolean) => void;
   updateComponent: (
     componentId: string,
     update: Partial<PaintableComponentData>
@@ -117,12 +117,23 @@ export const useChalkboardDataStore = create<ChalkboardDataStore>(
         });
       }
 
-      const { success } = await response.json();
+      const { success, data } = await response.json();
       if (success) {
         onSuccess && onSuccess('Successfully saved chalkboard.');
+        return set({
+          chalkboardId: data._id.toString(),
+        });
       } else {
         console.log('Error saving canvas');
-        onError && onError('Error occurred while saving Chalkboard.');
+        let error = 'Error occurred while saving Chalkboard.';
+        if (response.status === 401) {
+          error = 'You must be logged in to save a chalkboard.';
+        }
+        if (response.status === 403) {
+          error =
+            'You have reached the maximum number of chalkboards for your account.';
+        }
+        onError && onError(error);
       }
     },
     saveToLocalStorage: () => {
@@ -143,12 +154,37 @@ export const useChalkboardDataStore = create<ChalkboardDataStore>(
         };
       }),
 
-    removeComponent: (componentId: string) =>
-      set((state) => ({
+    removeComponent: async (
+      componentId: string,
+      dueToFailure: boolean = false
+    ) => {
+      const component = get().getComponent(componentId);
+      if (component.type === 'paste' && component.data.pasteType === 'image') {
+        const parts = component.data.imageUrl.split('/');
+        const key = parts[parts.length - 1];
+        const response = await fetch(`/api/s3-image-upload`, {
+          method: 'DELETE',
+
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ key, decrementUserImageCount: !dueToFailure }),
+        });
+        const { success } = await response.json();
+        if (!success) {
+          console.log('Error deleting image from s3');
+          return set((state) => ({
+            chalkboardComponents: state.chalkboardComponents,
+          }));
+        }
+      }
+
+      return set((state) => ({
         chalkboardComponents: state.chalkboardComponents.filter(
           (component) => component.id !== componentId
         ),
-      })),
+      }));
+    },
 
     updateComponent: (
       componentId: string,

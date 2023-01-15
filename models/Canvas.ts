@@ -1,10 +1,8 @@
 import mongoose from 'mongoose';
-import { UserData } from './User';
 
 export interface CanvasData {
   title: string;
-  // user: UserData;
-  userEmail: string;
+  userId: string;
   components: {
     type: string;
     props: any;
@@ -14,38 +12,40 @@ export interface CanvasData {
   updatedAt: Date;
 }
 
-const canvasSchema = new mongoose.Schema<CanvasData>({
-  title: {
-    type: String,
-    required: true,
-  },
-  userEmail: {
-    // type: mongoose.Schema.Types.ObjectId,
-    // ref: 'User',
-    type: String,
-    required: true,
-  },
-  // TODO: Add above code for user field once user model is working
-  // user: String,
-  components: [
-    {
-      type: {
-        type: String,
-        required: true,
-      },
-      props: mongoose.Schema.Types.Mixed,
-      data: mongoose.Schema.Types.Mixed,
-      id: {
-        type: String,
-        required: true,
-      },
+const canvasSchema = new mongoose.Schema<CanvasData>(
+  {
+    title: {
+      type: String,
+      required: true,
     },
-  ],
-  updatedAt: {
-    type: Date,
-    default: Date.now,
+    userId: {
+      type: String,
+      required: true,
+    },
+    components: [
+      {
+        type: {
+          type: String,
+          required: true,
+        },
+        props: mongoose.Schema.Types.Mixed,
+        data: mongoose.Schema.Types.Mixed,
+        id: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
-});
+  {
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+  }
+);
 
 const CanvasModel =
   (mongoose.models.Canvas as mongoose.Model<CanvasData>) ||
