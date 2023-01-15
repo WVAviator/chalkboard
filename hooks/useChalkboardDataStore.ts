@@ -21,7 +21,7 @@ export interface ChalkboardDataStore {
   ) => void;
   saveToLocalStorage: () => void;
   addComponent: (component: PaintableComponentData) => void;
-  removeComponent: (componentId: string, dueToFailure: boolean) => void;
+  removeComponent: (componentId: string, dueToFailure?: boolean) => void;
   updateComponent: (
     componentId: string,
     update: Partial<PaintableComponentData>
