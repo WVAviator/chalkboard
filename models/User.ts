@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema<UserData>(
         },
         max: {
           type: Number,
-          default: 10,
+          default: 5,
         },
       },
       images: {
@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema<UserData>(
         },
         max: {
           type: Number,
-          default: 10,
+          default: 15,
         },
       },
     },
