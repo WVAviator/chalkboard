@@ -122,7 +122,15 @@ export const useChalkboardDataStore = create<ChalkboardDataStore>(
         onSuccess && onSuccess('Successfully saved chalkboard.');
       } else {
         console.log('Error saving canvas');
-        onError && onError('Error occurred while saving Chalkboard.');
+        let error = 'Error occurred while saving Chalkboard.';
+        if (response.status === 401) {
+          error = 'You must be logged in to save a chalkboard.';
+        }
+        if (response.status === 403) {
+          error =
+            'You have reached the maximum number of chalkboards for your account.';
+        }
+        onError && onError(error);
       }
     },
     saveToLocalStorage: () => {
