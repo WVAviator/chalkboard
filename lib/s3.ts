@@ -22,12 +22,26 @@ export const generateUploadURL = async () => {
   return uploadURL;
 };
 
-export const deleteS3Image = (key: string) => {
+export const deleteS3Image = async (key: string) => {
+  console.log('Attempting to delete image from S3 with key: ', key);
   try {
-    s3.deleteObject({
-      Bucket: process.env.CHALKBOARD_AWS_BUCKET,
-      Key: key,
-    });
+    await new Promise<void>((resolve) =>
+      s3.deleteObject(
+        {
+          Bucket: process.env.CHALKBOARD_AWS_BUCKET,
+          Key: key,
+        },
+        (err, data) => {
+          if (err) {
+            console.log('Error deleting image from s3: ', err);
+            resolve();
+          } else {
+            console.log('Successfully deleted image from s3');
+            resolve();
+          }
+        }
+      )
+    );
   } catch (error) {
     console.log(error);
   }

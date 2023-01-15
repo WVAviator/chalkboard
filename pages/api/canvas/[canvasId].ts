@@ -78,7 +78,10 @@ export default async function handler(
       }
 
       canvas.components.forEach((component) => {
-        if (component.type === 'image') {
+        if (
+          component.type === 'paste' &&
+          component.data.pasteType === 'image'
+        ) {
           const urlParts = component.data.imageUrl.split('/');
           const key = urlParts[urlParts.length - 1];
           deleteS3Image(key);

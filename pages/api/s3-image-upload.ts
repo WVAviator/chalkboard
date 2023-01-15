@@ -25,11 +25,11 @@ export default async function handler(
     }
 
     const url = await generateUploadURL();
-
     sessionUser.accountLimits.images.current += 1;
+
     await sessionUser.save();
 
-    res.status(200).send({ url });
+    res.status(200).send({ url, success: true });
   }
 
   if (req.method === 'DELETE') {
@@ -39,13 +39,23 @@ export default async function handler(
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    const { key } = req.body;
-    deleteS3Image(key);
+    try {
+      const { key, decrementUserImageCount } = req.body;
+      await deleteS3Image(key);
 
-    sessionUser.accountLimits.images.current -= 1;
-    await sessionUser.save();
+      if (decrementUserImageCount) {
+        sessionUser.accountLimits.images.current -= 1;
+        if (sessionUser.accountLimits.images.current < 0) {
+          sessionUser.accountLimits.images.current = 0;
+        }
+      }
+      await sessionUser.save();
 
-    res.status(200).send({ success: true });
+      res.status(200).send({ success: true });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ success: false });
+    }
   }
 
   return res.status(405).json({ message: 'Method not allowed' });
