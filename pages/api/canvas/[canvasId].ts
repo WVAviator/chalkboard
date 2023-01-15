@@ -13,6 +13,10 @@ export default async function handler(
   }
 
   const sessionUser = await getSessionUser(req);
+  if (!sessionUser) {
+    console.log('Session not found.');
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
 
   const { method } = req;
 
