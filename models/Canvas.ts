@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 export interface CanvasData {
   title: string;
-  userEmail: string;
+  userId: string;
   components: {
     type: string;
     props: any;
@@ -17,7 +17,7 @@ const canvasSchema = new mongoose.Schema<CanvasData>({
     type: String,
     required: true,
   },
-  userEmail: {
+  userId: {
     type: String,
     required: true,
   },

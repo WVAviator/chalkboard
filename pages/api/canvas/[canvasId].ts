@@ -1,31 +1,27 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
+import getSessionUser from '../../../lib/getSessionUser';
 import CanvasModel from '../../../models/Canvas';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const session = await getSession({ req });
-  if (!session) {
-    console.log('Session not found.');
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
-
   const { canvasId } = req.query;
   if (!canvasId) {
     console.log('Canvas id is missing somehow.');
     return res.status(400).json({ message: 'Bad request' });
   }
 
+  const sessionUser = await getSessionUser(req);
+
   const { method } = req;
 
   if (method === 'GET') {
     console.log('Attempting to retrieve canvas with id: ' + canvasId);
     const canvas = await CanvasModel.findById(canvasId);
-    if (canvas.userEmail !== session.user.email) {
+    if (canvas.userId !== sessionUser.id) {
       console.log(
-        `Canvas found but unable to verify user. Canvas user: ${canvas.userEmail}, current user: ${session.user.email}`
+        `Canvas found but unable to verify user. Canvas user: ${canvas.userId}, current user: ${sessionUser.id}`
       );
       return res.status(401).json({ message: 'Unauthorized' });
     }
@@ -34,17 +30,17 @@ export default async function handler(
   }
 
   if (method === 'PATCH') {
-    const saveData = { ...req.body, userEmail: session.user.email };
+    const saveData = { ...req.body, userId: sessionUser.id };
     console.log('Attempting to update canvas with id: ' + canvasId);
 
     try {
       const canvas = await CanvasModel.findById(canvasId);
-      if (canvas.userEmail !== session.user.email) {
+      if (canvas.userId !== sessionUser.id) {
         console.log(
           'Canvas found but unable to verify user. Canvas user: ' +
-            canvas.userEmail +
+            canvas.userId +
             ', current user: ' +
-            session.user.email
+            sessionUser.id
         );
         return res.status(401).json({ message: 'Unauthorized' });
       }
@@ -66,16 +62,25 @@ export default async function handler(
     console.log('Attempting to delete canvas with id: ' + canvasId);
     try {
       const canvas = await CanvasModel.findById(canvasId);
-      if (canvas.userEmail !== session.user.email) {
+      if (canvas.userId !== sessionUser.id) {
         console.log(
           'Canvas found but unable to verify user. Canvas user: ' +
-            canvas.userEmail +
+            canvas.userId +
             ', current user: ' +
-            session.user.email
+            sessionUser.id
         );
         return res.status(401).json({ message: 'Unauthorized' });
       }
       await canvas.delete();
+
+      sessionUser.accountLimits.canvas.current -= 1;
+
+      if (sessionUser.accountLimits.canvas.current < 0) {
+        sessionUser.accountLimits.canvas.current = 0;
+      }
+
+      await sessionUser.save();
+
       return res.status(200).json({ success: true });
     } catch (error) {
       console.log('Error deleting canvas: ', error);

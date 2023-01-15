@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
-import dbConnect from '../../../lib/dbConnect';
+import getSessionUser from '../../../lib/getSessionUser';
 import CanvasModel from '../../../models/Canvas';
-import UserModel from '../../../models/User';
 
 interface ChalkboardFile {
   id: string;
@@ -14,23 +12,20 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log('Checking for established session...');
-  const session = await getSession({ req });
-  if (!session) {
-    console.log('Session not found.');
+  const sessionUser = await getSessionUser(req);
+  if (!sessionUser) {
+    console.log('Session not found.', sessionUser);
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
   const { method } = req;
 
-  await dbConnect();
-
   if (method === 'GET') {
     console.log(
-      'Attempting to retrieve all canvases for user: ' + session.user.email
+      'Attempting to retrieve all canvases for user: ' + sessionUser.id
     );
     const canvases = await CanvasModel.find({
-      userEmail: session.user.email,
+      userId: sessionUser.id,
     });
 
     const formattedData: ChalkboardFile[] = canvases.map((canvas) => {
@@ -42,25 +37,34 @@ export default async function handler(
     });
 
     console.log(
-      'Found ' +
-        formattedData.length +
-        ' canvases for user: ' +
-        session.user.email
+      'Found ' + formattedData.length + ' canvases for user: ' + sessionUser.id
     );
 
     return res.status(200).json({ success: true, data: formattedData });
   }
 
   if (method === 'POST') {
-    const saveData = { ...req.body, userEmail: session.user.email };
+    if (
+      sessionUser.accountLimits.canvas.current >=
+      sessionUser.accountLimits.canvas.max
+    ) {
+      console.log('User has reached canvas limit.');
+      return res
+        .status(403)
+        .json({ message: 'Unable to save, canvas limit reached.', success: false });
+    }
 
-    console.log(
-      'Attempting to create new canvas for user: ' + session.user.email
-    );
+    const saveData = { ...req.body, userId: sessionUser.id };
+
+    console.log('Attempting to create new canvas for user: ' + sessionUser.id);
 
     try {
       const canvas = new CanvasModel(saveData);
       await canvas.save();
+
+      sessionUser.accountLimits.canvas.current += 1;
+      await sessionUser.save();
+
       return res.status(201).json({ success: true, data: canvas });
     } catch (error) {
       console.log('Error saving canvas: ', error);
