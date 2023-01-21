@@ -16,10 +16,19 @@ export const authOptions: AuthOptions = {
   events: {
     createUser: async (message) => {
       await dbConnect();
-      const userProfile = await UserModel.findOne({
-        _id: message.user.id,
-      });
-      await userProfile.save();
+      console.log(
+        'Loading and saving new user data to populate with defaults.'
+      );
+      try {
+        const userProfile = await UserModel.findOne({
+          _id: message.user.id,
+        });
+        await userProfile.save();
+        console.log('New user data saved.');
+      } catch (error) {
+        console.log('Error saving new user data.');
+        console.log(error);
+      }
     },
   },
 };
