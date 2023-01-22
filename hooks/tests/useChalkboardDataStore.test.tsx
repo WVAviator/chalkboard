@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 import { useChalkboardDataStore } from '../useChalkboardDataStore';
 import { renderHook, act } from '@testing-library/react';
 

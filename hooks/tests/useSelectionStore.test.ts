@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 import { useSelectionStore } from '../useSelectionStore';
 import { renderHook, act } from '@testing-library/react';
 

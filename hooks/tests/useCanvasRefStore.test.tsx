@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 import { render, renderHook } from '@testing-library/react';
 import React from 'react';
 import { useCanvasRefStore } from '../useCanvasRefStore';

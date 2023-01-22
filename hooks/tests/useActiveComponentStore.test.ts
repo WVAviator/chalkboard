@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 import { useActiveComponentStore } from '../useActiveComponentStore';
 import { renderHook, act } from '@testing-library/react';
 

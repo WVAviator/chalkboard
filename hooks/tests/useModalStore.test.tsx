@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 import { useModalStore } from '../useModalStore';
 import { renderHook, act } from '@testing-library/react';
 

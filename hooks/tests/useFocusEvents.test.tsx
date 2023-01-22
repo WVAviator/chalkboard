@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import useFocusEvents from '../useFocusEvents';

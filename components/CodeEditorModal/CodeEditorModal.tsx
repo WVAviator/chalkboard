@@ -37,7 +37,12 @@ const CodeEditorModal: React.FC<CodeEditorModalProps> = ({
   };
 
   return (
-    <Dialog open={open} scroll="paper" onClose={() => setOpen(false)}>
+    <Dialog
+      open={open}
+      scroll="paper"
+      onClose={() => setOpen(false)}
+      aria-label="code editor modal"
+    >
       <DialogTitle>Code Context</DialogTitle>
       <DialogContent dividers>
         <Tabs

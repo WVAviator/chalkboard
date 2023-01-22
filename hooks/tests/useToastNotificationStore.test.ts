@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 import { useToastNotificationStore } from '../useToastNotificationStore';
 import { renderHook, act } from '@testing-library/react';
 

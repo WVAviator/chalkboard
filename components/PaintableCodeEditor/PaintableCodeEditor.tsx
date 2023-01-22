@@ -41,7 +41,9 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
     React.useState<boolean>(false);
   const [modalEditorOpen, setModalEditorOpen] = React.useState<boolean>(false);
 
-  const showToastNotification = useToastNotificationStore((state) => state.showToastNotification);
+  const showToastNotification = useToastNotificationStore(
+    (state) => state.showToastNotification
+  );
 
   useEffect(() => {
     if (!createEvent) return;
@@ -82,7 +84,7 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
       console.log(
         'An error occurred while attempting to compile and execute code.'
       );
-        showToastNotification("Unable to execute code", "error");
+      showToastNotification('Unable to execute code', 'error');
     }
     setLoadingConsoleOutput(false);
   };
@@ -101,6 +103,7 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
           <Button
             onClick={handleOpenModalEditor}
             onPointerDown={(event) => event.stopPropagation()}
+            aria-label="edit code context"
           >
             <OpenInNewIcon />
           </Button>
@@ -125,7 +128,12 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
             codeContext={data.codeContext || defaultCodeContext}
             setCodeContext={updateCodeContext}
           />
-          <div className={styles.controls} onClick={handleCodeExecute}>
+          <div
+            className={styles.controls}
+            onClick={handleCodeExecute}
+            role="button"
+            aria-label="execute code"
+          >
             {loadingConsoleOutput ? (
               <CircularProgress size="1.25rem" thickness={6} />
             ) : (
@@ -137,6 +145,7 @@ const PaintableCodeEditor: React.FC<PaintableCodeEditorProps> = ({
         <div
           className={styles.console}
           onPointerDown={(event) => event.stopPropagation()}
+          aria-label="console output"
         >
           {consoleOutput.map((line, index) => (
             <pre key={index}>{line}</pre>
