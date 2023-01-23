@@ -1,11 +1,11 @@
 import React from 'react';
 import { useChalkboardDataStore } from '../../hooks/useChalkboardDataStore';
-import { PaintableComponentProps } from '../ComponentCanvas/ComponentCanvas';
 import PaintableDiv, { PaintableDivProps } from '../PaintableDiv/PaintableDiv';
 import { TextSize } from '../TextSizePicker/TextSizePicker';
 import styles from './PaintableText.module.css';
 
-export interface PaintableTextProps extends PaintableDivProps {
+export interface PaintableTextProps
+  extends Omit<PaintableDivProps, 'children'> {
   textSize?: TextSize;
 }
 
@@ -75,6 +75,7 @@ const PaintableText: React.FC<PaintableTextProps> = ({
         onBlur={() => setEditing(false)}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
+        aria-label="editable text"
       />
     </PaintableDiv>
   );
