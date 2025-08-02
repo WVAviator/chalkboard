@@ -2,6 +2,9 @@
   "name": "chalkboard",
   "version": "0.0.1",
   "description": "A small web application geared towards developers that want to draw diagrams as well as execute code in the same place.",
+  "engines": {
+    "node": "22.x"
+  },
   "main": "index.js",
   "author": "Alexander Durham",
   "license": "MIT",
